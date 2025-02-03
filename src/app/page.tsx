@@ -1,5 +1,4 @@
-// app/page.tsx
 
-export default function HomePage() {
-  return <div></div>
+export default function Home() {
+  return <h1>개발 중</h1>
 }
