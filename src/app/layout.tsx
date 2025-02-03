@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
+import * as React from 'react'
+import '@/app/styles/globals.css'
 
 export const metadata: Metadata = {
-  title: 'Idea demo',
-  description: '개발 중',
+  title: 'SparkLens',
+  description: '아이디어 분석 툴',
 }
 
 export default function RootLayout({
