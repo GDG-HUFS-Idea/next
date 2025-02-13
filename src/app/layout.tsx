@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import * as React from 'react'
-import '@/app/styles/globals.css'
+import Header from '@/widgets/header/header'
+import Footer from '@/widgets/footer/footer'
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 
 export const metadata: Metadata = {
   title: 'SparkLens',
@@ -14,7 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppRouterCacheProvider options={{ key: 'css' }}>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </AppRouterCacheProvider>
+      </body>
     </html>
   )
 }

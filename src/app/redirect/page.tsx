@@ -5,11 +5,9 @@ export default function RedirectData() {
   const searchParams = useSearchParams()
 
   const tokenParam = searchParams!.get('token')
-  const searchTextParam = searchParams!.get('searchText')
   return (
-    <>
+    <div>
       Token: {tokenParam} <br />
-      SearchText: {searchTextParam}
-    </>
+    </div>
   )
 }
