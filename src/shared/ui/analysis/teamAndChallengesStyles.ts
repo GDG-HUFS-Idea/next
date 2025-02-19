@@ -3,6 +3,7 @@ export const styles = {
     width: '45%',
     flexGrow: 1,
     backgroundColor: '#F9FAFB',
+    paddingBottom: '24px',
   },
   opportunityCard: {
     flex: '1 1 48%',
