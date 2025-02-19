@@ -7,7 +7,7 @@ import MarketOverview from '@/pages/analysis/marketOverview'
 import SimilarServices from '@/pages/analysis/similarServices'
 import ExpectedBM from '@/pages/analysis/expectedBM'
 import Opportunities from '@/pages/analysis/opportunities'
-import TeamAndChallenges from '@/pages/analysis/teamAndChallenges'
+import TeamAndChallengers from '@/pages/analysis/teamAndChallenges'
 
 export default function AnalysisPage() {
   return (
@@ -17,7 +17,7 @@ export default function AnalysisPage() {
       <SimilarServices />
       <ExpectedBM />
       <Opportunities />
-      <TeamAndChallenges />
+      <TeamAndChallengers />
     </Box>
   )
 }

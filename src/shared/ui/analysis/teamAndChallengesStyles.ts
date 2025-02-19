@@ -1,18 +1,12 @@
 export const styles = {
-  sectionCard: {
-    width: '100%',
-    padding: '24px',
-    marginBottom: '24px',
-    borderRadius: '12px',
-    backgroundColor: '#F9FAFB',
-  },
   opportunityList: {
-    width: '100%',
+    width: '45%',
     flexGrow: 1,
+    backgroundColor: '#F9FAFB',
   },
   opportunityCard: {
     flex: '1 1 48%',
-    padding: '16px',
+    padding: '8px',
     borderRadius: '8px',
     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
     transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',

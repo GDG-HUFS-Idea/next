@@ -18,8 +18,8 @@ export const styles = {
       'transform 0.3s ease-out, box-shadow 0.3s ease-out, opacity 0.5s ease-in', // ✅ 트랜지션 추가
     animation: 'fadeIn 0.8s forwards', // ✅ 등장 애니메이션
     '&:hover': {
-      transform: 'scale(1.03)', // ✅ 마우스 오버 시 약간 커지는 효과
-      boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.15)', // ✅ 그림자 강조
+      transform: 'scale(1.03)', // ✅ 마우스 오버 시 확대 효과
+      boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.15)',
     },
   },
   chartTitle: {

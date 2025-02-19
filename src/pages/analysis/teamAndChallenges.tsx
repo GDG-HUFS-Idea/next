@@ -1,14 +1,12 @@
-import React from 'react'
-import { Box, Card } from '@mui/material'
-import { styles } from '@/shared/ui/analysis/teamStyles'
+import { Grid2 } from '@mui/material'
+import Challenges from './bottom/challenges'
+import Team from './bottom/team'
 
-const TeamAndChallenges: React.FC = () => {
+export default function TeamAndChallenges() {
   return (
-    <Box sx={styles.sectionContainer}>
-      <Card sx={styles.teamCard}>👥 예상 필요 팀원</Card>
-      <Card sx={styles.challengeCard}>🔍 한계점</Card>
-    </Box>
+    <Grid2 container spacing={14}>
+      <Team />
+      <Challenges />
+    </Grid2>
   )
 }
-
-export default TeamAndChallenges

@@ -4,12 +4,12 @@ import { styles } from '@/shared/ui/analysis/expectedStyles'
 
 const ExpectedBM: React.FC = () => {
   return (
-    <Card sx={styles.sectionCard}>
+    <Box sx={styles.sectionCard}>
       <Typography variant="h6">📝 예상 BM</Typography>
       <Box sx={styles.bmContainer}>
         <Card sx={styles.bmCard}>큰 BM 제목</Card>
       </Box>
-    </Card>
+    </Box>
   )
 }
 

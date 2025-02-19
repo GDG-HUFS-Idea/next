@@ -5,7 +5,6 @@ export const styles = {
     marginBottom: '24px',
     borderRadius: '12px',
     boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#fff',
   },
   analysisContent: {
     display: 'flex',

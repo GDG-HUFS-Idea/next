@@ -2,6 +2,9 @@ export const styles = {
   container: {
     width: '100%',
     padding: '16px',
+    marginBottom: '24px',
+    borderRadius: '12px',
+    backgroundColor: '#F9FAFB',
   },
   title: {
     marginBottom: '16px',
