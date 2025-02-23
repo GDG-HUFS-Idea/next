@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
-import { styles } from '@/shared/ui/analysis/marketStyles'
+import { styles } from '../../shared/ui/analysis/marketStyles'
 import MarketChart from './marketChart'
 
 const MarketOverview: React.FC = () => {

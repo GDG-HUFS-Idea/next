@@ -4,7 +4,7 @@ import * as React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Box, Tabs, Tab } from '@mui/material'
 import Link from 'next/link'
-import { styles } from '@/shared/ui/navigationStyles'
+import { styles } from '../shared/ui/navigationStyles'
 
 export default function NavigationTab() {
   const router = useRouter()

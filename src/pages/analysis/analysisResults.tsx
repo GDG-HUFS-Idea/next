@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Typography, Card } from '@mui/material'
-import { styles } from '@/shared/ui/analysis/analysisStyles'
+import { styles } from '../../shared/ui/analysis/analysisStyles'
 import { Zap, Brain, MessageCircleMore, Eye } from 'lucide-react'
 
 const AnalysisResults: React.FC = () => {

@@ -9,7 +9,7 @@ import {
   ChartsXAxis,
   ChartsYAxis,
 } from '@mui/x-charts'
-import { styles } from '@/shared/ui/analysis/chartStyles'
+import { styles } from '../../shared/ui/analysis/chartStyles'
 
 const years = ['2020', '2021', '2022', '2023', '2024']
 

@@ -12,10 +12,14 @@ export const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '16px',
+    paddingTop: '3%',
   },
   bmCard: {
     padding: '16px',
     borderRadius: '8px',
     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
+  },
+  bmButton: {
+    marginLeft: 'auto',
   },
 }

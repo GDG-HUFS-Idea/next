@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Card, Grid2, CardContent, Typography } from '@mui/material'
-import { styles } from '@/shared/ui/analysis/teamAndChallengesStyles'
+import { styles } from '../../../shared/ui/analysis/teamAndChallengesStyles'
 
 const Team: React.FC = () => {
   return (

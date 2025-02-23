@@ -24,7 +24,7 @@ export const styles = {
     padding: '16px',
     boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
     borderRadius: '8px',
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(213, 253, 199, 0.78)',
     transition: 'transform 0.3s ease-out, box-shadow 0.3s ease-out',
     '&:hover': {
       transform: 'scale(1.03)', // ✅ 마우스 오버 시 확대 효과

@@ -1,7 +1,14 @@
 import React from 'react'
-import { Box, Typography, Card, Grid2, CardContent } from '@mui/material'
-
-import { styles } from '@/shared/ui/analysis/opportunitiesStyles'
+import {
+  Box,
+  Typography,
+  Card,
+  Grid2,
+  CardContent,
+  Button,
+} from '@mui/material'
+import { ExternalLink } from 'lucide-react'
+import { styles } from '../../shared/ui/analysis/opportunitiesStyles'
 
 const Opportunities: React.FC = () => {
   return (
@@ -12,7 +19,17 @@ const Opportunities: React.FC = () => {
           <Grid2 size={6}>
             <Card sx={styles.opportunityCard}>
               <CardContent>
-                <Typography variant="subtitle1">지원 사업 1</Typography>
+                <Box display="flex">
+                  <Typography variant="subtitle1">지원 사업 1</Typography>
+                  <Button
+                    href="https://example.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{ marginLeft: 'auto' }}
+                  >
+                    <ExternalLink color="black" />
+                  </Button>
+                </Box>
                 <Typography variant="body2" color="text.secondary">
                   정부 지원 정책 또는 각종 혜택
                 </Typography>
@@ -22,7 +39,17 @@ const Opportunities: React.FC = () => {
           <Grid2 size={6}>
             <Card sx={styles.opportunityCard}>
               <CardContent>
-                <Typography variant="subtitle1">지원 사업 2</Typography>
+                <Box display="flex">
+                  <Typography variant="subtitle1">지원 사업 2</Typography>
+                  <Button
+                    href="https://example.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{ marginLeft: 'auto' }}
+                  >
+                    <ExternalLink color="black" />
+                  </Button>
+                </Box>
                 <Typography variant="body2" color="text.secondary">
                   중소기업 지원 프로그램
                 </Typography>
@@ -32,7 +59,17 @@ const Opportunities: React.FC = () => {
           <Grid2 size={6}>
             <Card sx={styles.opportunityCard}>
               <CardContent>
-                <Typography variant="subtitle1">지원 사업 3</Typography>
+                <Box display="flex">
+                  <Typography variant="subtitle1">지원 사업 3</Typography>
+                  <Button
+                    href="https://example.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{ marginLeft: 'auto' }}
+                  >
+                    <ExternalLink color="black" />
+                  </Button>
+                </Box>
                 <Typography variant="body2" color="text.secondary">
                   기타 제도
                 </Typography>
