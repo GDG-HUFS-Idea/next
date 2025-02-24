@@ -1,6 +1,8 @@
 'use client'
 
+import { useState } from 'react'
 import {
+  Collapse,
   Drawer,
   List,
   ListItem,
@@ -13,14 +15,8 @@ import {
   ListItemButton,
   Box,
 } from '@mui/material'
-import { usePathname } from 'next/navigation'
-import {
-  History,
-  Settings,
-  LogOut,
-  HelpCircle,
-  ShieldCheck,
-} from 'lucide-react'
+import Historys from './sidebar/historys'
+import { Settings, LogOut, HelpCircle, ShieldCheck } from 'lucide-react'
 
 const Sidebar = ({
   user,
@@ -33,145 +29,142 @@ const Sidebar = ({
   setOpen: (open: boolean) => void
   children: React.ReactNode
 }) => {
-  const pathname = usePathname()
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [adminOpen, setAdminOpen] = useState(false)
 
   const toggleDrawer = () => {
     setOpen(!open)
   }
 
-  const menuItems = [
-    { text: 'History', icon: <History size={20} />, path: '/history' },
-    { text: 'Settings', icon: <Settings size={20} />, path: '/settings' },
-  ]
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen)
+  }
 
-  if (user.role === 'admin') {
-    menuItems.push({
-      text: 'Admin',
-      icon: <ShieldCheck size={20} />,
-      path: '/admin',
-    })
+  const toggleAdmin = () => {
+    setAdminOpen(!adminOpen)
   }
 
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
-      <IconButton
-        onClick={toggleDrawer}
-        sx={{
-          position: 'absolute',
-          transition: 'translateX 1.2s',
-          marginTop: '0.6%',
-          transform: open ? 'translateX(520%)' : 'translateX(140%)',
-          zIndex: 1500,
-          backgroundColor: 'white',
-          boxShadow: 2,
-          width: '2.5%',
-        }}
-      >
-        {open ? '<' : '>'}
-      </IconButton>
       <Drawer
         variant="permanent"
         sx={{
-          width: open ? 240 : 80,
+          width: open ? 270 : 80,
           flexShrink: 0,
-          transform: 'translateY(0%)',
+          display: 'flex',
+          flexDirection: 'column',
           '& .MuiDrawer-paper': {
-            borderRight: '1px solid #e0e0e0',
-            width: open ? 240 : 80,
+            boxSizing: 'border-box',
+
+            position: 'fixed',
+            height: '100vh',
+            width: open ? 270 : 80,
             transition: 'width 0.3s',
             overflowX: 'hidden',
+            overflowY: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
           },
         }}
       >
-        <Box
-          sx={{
-            position: 'relative',
-            top: 0,
-            left: 0,
-            width: '100%',
-            zIndex: 1400,
-          }}
-        ></Box>
-        <List>
-          <ListItem sx={{ minHeight: 56 }}>
-            <Avatar sx={{ width: 40, height: 40 }} src={user.avatar} />
-            <Typography
-              variant="body1"
-              sx={{
-                marginLeft: 2,
-                opacity: open ? 1 : 0,
-                transition: 'opacity 0.3s',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                width: open ? 'auto' : '0px',
-              }}
-            >
-              {user.name}
-            </Typography>
-          </ListItem>
+        {/* 프로필 영역 */}
+        <Box sx={{ display: 'flex', alignItems: 'center', padding: 2 }}>
+          <Avatar sx={{ width: 40, height: 40 }} src={user.avatar} />
+          {open && (
+            <Box sx={{ marginLeft: 2 }}>
+              <Typography variant="caption" color="gray">
+                {user.role === 'admin' ? 'ADMINISTRATOR' : 'PRODUCT MANAGER'}
+              </Typography>
+              <Typography variant="body1">{user.name}</Typography>
+            </Box>
+          )}
+          <IconButton onClick={toggleDrawer} sx={{ marginLeft: 'auto' }}>
+            {open ? '<' : '>'}
+          </IconButton>
+        </Box>
+        <Divider />
+
+        {/* 메뉴 리스트 */}
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+          <List>
+            <Historys open={open} />
+          </List>
           <Divider />
-          {menuItems.map((item) => (
-            <ListItem
-              key={item.text}
-              disablePadding
-              sx={{ minHeight: 48, display: 'flex', alignItems: 'center' }}
-            >
-              <ListItemButton
-                component="a"
-                href={item.path}
-                selected={pathname === item.path}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  textAlign: 'left',
-                  padding: '10px 20px',
-                }}
-              >
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  sx={{
-                    opacity: open ? 1 : 0,
-                    transition: 'opacity 0.3s',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                  }}
-                />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton onClick={toggleSettings}>
+                <ListItemIcon>
+                  <Settings size={20} />
+                </ListItemIcon>
+                {open && <ListItemText primary="Settings" />}
               </ListItemButton>
             </ListItem>
-          ))}
+            <Collapse in={settingsOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemText primary="Sub Setting 1" />
+                </ListItemButton>
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemText primary="Sub Setting 2" />
+                </ListItemButton>
+              </List>
+            </Collapse>
+          </List>
+          {user.role === 'admin' && (
+            <>
+              <Divider />
+              <List>
+                <ListItem disablePadding>
+                  <ListItemButton onClick={toggleAdmin}>
+                    <ListItemIcon>
+                      <ShieldCheck size={20} />
+                    </ListItemIcon>
+                    {open && <ListItemText primary="Management" />}
+                  </ListItemButton>
+                </ListItem>
+                <Collapse in={adminOpen} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemText primary="User Management" />
+                    </ListItemButton>
+                  </List>
+                </Collapse>
+              </List>
+            </>
+          )}
+        </Box>
+
+        {/* 하단 고정 - 도움말 & 로그아웃 */}
+        <Box sx={{ paddingBottom: 0 }}>
           <Divider />
-          <ListItem disablePadding sx={{ minHeight: 48 }}>
-            <ListItemButton>
-              <ListItemIcon>
-                <HelpCircle size={20} />
-              </ListItemIcon>
-              <ListItemText
-                primary="Help"
-                sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.3s' }}
-              />
-            </ListItemButton>
-          </ListItem>
-          <ListItem disablePadding sx={{ minHeight: 48 }}>
-            <ListItemButton>
-              <ListItemIcon>
-                <LogOut size={20} />
-              </ListItemIcon>
-              <ListItemText
-                primary="Logout"
-                sx={{ opacity: open ? 1 : 0, transition: 'opacity 0.3s' }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </List>
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <HelpCircle size={28} />
+                </ListItemIcon>
+                {open && <ListItemText primary="Help" />}
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <LogOut size={28} />
+                </ListItemIcon>
+                {open && <ListItemText primary="Logout Account" />}
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
       </Drawer>
+
       <Box
         sx={{
           flexGrow: 1,
-          transition: 'width 0.3s ease-in-out',
-          width: open ? 'calc(100% - 240px)' : 'calc(100% - 80px)',
-          padding: '20px',
+          transition: 'margin 0.3s ease-in-out',
+          width: `calc(100% - ${open ? 270 : 80}px)`,
+          minHeight: '100vh',
+          overflow: 'auto',
         }}
       >
         {children}

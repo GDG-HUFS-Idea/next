@@ -1,6 +1,6 @@
 export const styles = {
   navBar: {
-    width: '100%',
+    width: '90%',
     display: 'flex',
     justifyContent: 'center', // 네비게이션 가운데 정렬
   },
