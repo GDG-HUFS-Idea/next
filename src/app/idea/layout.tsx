@@ -2,17 +2,25 @@ import NavigationTab from '@/pages/navigationTab'
 import { Card } from '@mui/material'
 import * as React from 'react'
 import { styles } from '../../shared/ui/ideaStyles'
+import ClientSidebar from '@/pages/clientSidebar'
 
 export default function IdeaLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const user = {
+    name: 'Andrew Smith',
+    role: 'admin', // 'user' or 'admin'
+    avatar: '/avatar.png',
+  }
   return (
     <main>
-      <NavigationTab />
+      <ClientSidebar user={user}>
+        <NavigationTab />
 
-      <Card sx={styles.ideaWrapper}>{children}</Card>
+        <Card sx={styles.ideaWrapper}>{children}</Card>
+      </ClientSidebar>
     </main>
   )
 }

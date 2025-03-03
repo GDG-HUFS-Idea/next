@@ -4,7 +4,6 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import Header from '@/widgets/header'
 import Footer from '@/widgets/footer'
 import './global.css'
-import ClientSidebar from '@/pages/clientSidebar'
 
 export const metadata: Metadata = {
   title: 'SparkLens',
@@ -16,20 +15,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const user = {
-    name: 'Andrew Smith',
-    role: 'admin', // 'user' or 'admin'
-    avatar: '/avatar.png',
-  }
   return (
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <ClientSidebar user={user}>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-          </ClientSidebar>
+          <Header />
+          <main>{children}</main>
+          <Footer />
         </AppRouterCacheProvider>
       </body>
     </html>

@@ -56,7 +56,7 @@ const Sidebar = ({
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
 
-            position: 'fixed',
+            position: 'sticky',
             height: '100vh',
             width: open ? 270 : 80,
             transition: 'width 0.3s',
