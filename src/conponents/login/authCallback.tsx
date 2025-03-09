@@ -1,40 +1,33 @@
-import { useQuery } from '@tanstack/react-query'
-import { useRouter } from 'next/router'
+import { useGetAuthCallback } from '@/shared/api/redirect/getAuthCallback'
+import { useAuthStore, useTermAuthStore } from '@/shared/store/authStore'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-type ResponseLoginValue = {
-  has_account: boolean
-  token: string
-  user: {
-    name: string
-    permissions: string[]
-  }
-}
-
 export default function AuthCallback() {
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const { code } = router.query // 쿼리 파라미터에서 `code` 가져오기
+  const termAccount = useTermAuthStore((state) => state.setAccount)
+  const account = useAuthStore((store) => store.setUser)
 
-  const { data, error, isLoading } = useQuery<ResponseLoginValue>({
-    queryKey: ['auth', code], // queryKey는 동적인 값 포함 가능
-    queryFn: async () => {
-      if (!code) return null // code가 없으면 요청하지 않음
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth?code=${code}`
-      )
-      return res.json()
-    },
-    enabled: !!code, // `code`가 있을 때만 실행
-  })
-
+  const code = searchParams.get('code') || '' // URL에서 code 가져오기
+  console.log(useGetAuthCallback(code), code)
+  const { data, isLoading } = useGetAuthCallback(code)
   useEffect(() => {
-    if (data) {
+    if (!data?.has_account) {
+      termAccount(data)
       router.push('/terms')
+    } else {
+      account(data)
+      router.push('/idea/input')
     }
   }, [data, router])
 
   if (isLoading) return <p>로딩 중...</p>
-  if (error) return <p>에러 발생: {error.message}</p>
 
-  return <p>인증 중...</p> // 데이터를 기다리는 동안 표시할 UI
+  return (
+    <>
+      {!data?.has_account || <h1>기존 회원 페이지로 이동</h1>}
+      {data?.has_account || <h1>신규 회원 약관 동의 페이지로 이동</h1>}
+    </>
+  )
 }
