@@ -1,0 +1,122 @@
+'use client'
+
+import { useRouter } from 'next/navigation'
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Checkbox,
+  Button,
+  CircularProgress,
+  Box,
+} from '@mui/material'
+import { useTermsStore } from '@/shared/store/useTermsStore'
+import { useTermAuthStore } from '@/shared/store/authStore'
+import { useTermsQuery, useSignupMutation } from '@/shared/api/getTerms'
+
+export default function TermsPage() {
+  const account = useTermAuthStore().account
+  const ids = account?.term_ids ?? []
+  const router = useRouter()
+  const { data, isLoading } = useTermsQuery(ids)
+  const signupMutation = useSignupMutation()
+
+  const { agreements, setAgreement } = useTermsStore()
+
+  // 필수 약관이 전부 체크되었는지 확인
+  const isAllRequiredChecked = data?.terms
+    ?.filter((term: any) => term.is_required)
+    .every((term: any) => agreements[term.id])
+
+  // 회원가입 API 호출
+  const handleSubmit = () => {
+    if (!isAllRequiredChecked) {
+      alert('필수 약관에 모두 동의해야 합니다.')
+      return
+    }
+
+    const session_id = account?.session_id ?? ''
+    const user_agreements = data.terms.map((term: any) => ({
+      term_id: term.id,
+      has_agreed: agreements[term.id] || false,
+    }))
+    signupMutation.mutate(
+      { sessionId: session_id, agreements: user_agreements },
+      {
+        onSuccess: () => {
+          router.push('/idea/inputs') // ✅ 이제 useRouter()를 안전하게 사용 가능
+        },
+        onError: (error) => {
+          console.error('회원가입 요청 실패:', error)
+          alert('회원가입 요청에 실패했습니다.')
+        },
+      }
+    )
+  }
+
+  return (
+    <Container maxWidth="md" sx={{ mt: 5 }}>
+      <Typography variant="h4" gutterBottom>
+        이용약관 동의
+      </Typography>
+
+      {isLoading ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="50vh"
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box>
+          {data?.terms.map((term: any) => (
+            <Card key={term.id} sx={{ mb: 2, boxShadow: 2 }}>
+              <CardContent>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={agreements[term.id] || false}
+                      onChange={() =>
+                        setAgreement(term.id, !agreements[term.id])
+                      }
+                    />
+                  }
+                  label={
+                    <Typography variant="body1">
+                      {term.title}
+                      {term.is_required && (
+                        <span style={{ color: 'red' }}> *</span>
+                      )}
+                    </Typography>
+                  }
+                />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
+                  {term.content}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* 가입하기 버튼 */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            sx={{ mt: 2, width: '100%' }}
+            disabled={signupMutation.isPending}
+          >
+            {signupMutation.isPending ? '처리 중...' : '가입하기'}
+          </Button>
+        </Box>
+      )}
+    </Container>
+  )
+}

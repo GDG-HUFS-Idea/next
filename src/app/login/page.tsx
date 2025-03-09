@@ -31,7 +31,8 @@ const LoginPage: React.FC = () => {
               variant="outlined"
               sx={styles.googleButton}
               onClick={() => {
-                window.location.href = 'http://suehyun.kro.kr/api/oauth2/google'
+                window.location.href =
+                  `${process.env.NEXT_PUBLIC_BASE_URL}` + '/auth/oauth/google'
               }}
             >
               구글로 로그인

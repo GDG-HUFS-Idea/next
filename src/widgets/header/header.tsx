@@ -4,8 +4,10 @@ import { AppBar, Toolbar, IconButton, Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { User, Settings } from 'lucide-react'
 import styles from '@/shared/ui/headerFooterStyles'
+import { useRouter } from 'next/navigation'
 
 const Header: React.FC = () => {
+  const router = useRouter()
   return (
     <AppBar sx={styles.header}>
       <Toolbar sx={styles.toolbar}>
@@ -16,7 +18,7 @@ const Header: React.FC = () => {
 
         {/* Icons */}
         <Box>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => router.push('./login')}>
             <User />
           </IconButton>
           <IconButton color="inherit">
