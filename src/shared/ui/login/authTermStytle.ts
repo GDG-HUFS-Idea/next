@@ -17,6 +17,7 @@ export const styles = {
   },
   submitButton: {
     mt: 2,
+    mb: 2,
     width: '100%',
   },
 }
