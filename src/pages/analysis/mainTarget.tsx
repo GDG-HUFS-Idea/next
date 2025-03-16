@@ -2,11 +2,11 @@ import React from 'react'
 import { Box, Typography, Card } from '@mui/material'
 import { styles } from '../../shared/ui/analysis/expectedStyles'
 
-const ExpectedBM: React.FC = () => {
+const MainTarget: React.FC = () => {
   return (
     <Box sx={styles.sectionCard}>
       <Box display="flex">
-        <Typography variant="h6">📝 예상 BM</Typography>
+        <Typography variant="h6">📝 주요 타겟</Typography>
       </Box>
 
       <Box sx={styles.bmContainer}>
@@ -16,4 +16,4 @@ const ExpectedBM: React.FC = () => {
   )
 }
 
-export default ExpectedBM
+export default MainTarget

@@ -8,7 +8,8 @@ export const styles = {
     backgroundColor: '#F9FAFB',
   },
   bmContainer: {
-    width: '100%',
+    width: '90%',
+    paddingLeft: '5%',
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '16px',
@@ -18,8 +19,5 @@ export const styles = {
     padding: '16px',
     borderRadius: '8px',
     boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
-  },
-  bmButton: {
-    marginLeft: 'auto',
   },
 }
