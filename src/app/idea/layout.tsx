@@ -1,7 +1,7 @@
-import NavigationTab from '@/pages/navigationTab'
 import { Card } from '@mui/material'
 import * as React from 'react'
 import { styles } from '../../shared/ui/ideaStyles'
+import NavigationTab from '@/pages/navigationTab'
 import ClientSidebar from '@/pages/clientSidebar'
 
 export default function IdeaLayout({
@@ -11,14 +11,12 @@ export default function IdeaLayout({
 }>) {
   const user = {
     name: 'Andrew Smith',
-    role: 'admin', // 'user' or 'admin'
     avatar: '/avatar.png',
   }
   return (
     <main>
       <ClientSidebar user={user}>
         <NavigationTab />
-
         <Card sx={styles.ideaWrapper}>{children}</Card>
       </ClientSidebar>
     </main>

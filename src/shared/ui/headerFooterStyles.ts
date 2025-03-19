@@ -5,6 +5,7 @@ const styles = {
     elevation: 1,
     backgroundColor: 'white',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
   } as const,
 
   toolbar: {
