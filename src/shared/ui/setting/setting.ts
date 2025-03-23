@@ -1,7 +1,7 @@
 import { SxProps, Theme } from '@mui/material'
 
 export const containerSx: SxProps<Theme> = {
-  maxWidth: '1200px',
+  width: '50%',
   margin: '0 auto',
   padding: { xs: '20px', md: '40px 20px' },
 }

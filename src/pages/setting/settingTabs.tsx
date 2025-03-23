@@ -54,7 +54,7 @@ const SettingTabs = () => {
           value={value}
           onChange={handleChange}
           aria-label="setting tabs"
-          variant="fullWidth"
+          variant="standard"
           sx={tabsSx}
         >
           <Tab label="계 정" {...a11yProps(0)} />

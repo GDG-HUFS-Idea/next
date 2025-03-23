@@ -3,7 +3,6 @@ import * as React from 'react'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import Footer from '@/widgets/footer'
 import './global.css'
-import Header from '@/widgets/header'
 
 export const metadata: Metadata = {
   title: 'SparkLens',
@@ -19,7 +18,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <Header />
           <main>{children}</main>
           <Footer />
         </AppRouterCacheProvider>

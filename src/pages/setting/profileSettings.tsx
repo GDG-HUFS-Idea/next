@@ -9,9 +9,6 @@ import {
   cardHeaderSx,
   cardTitleSx,
   infoBoxSx,
-  infoRowSx,
-  labelSx,
-  valueSx,
   buttonGroupSx,
   cancelButtonSx,
   saveButtonSx,
@@ -35,13 +32,9 @@ const ProfileSettings = () => {
         <Box sx={cardHeaderSx}>
           <Typography sx={cardTitleSx}>남은 기간:</Typography>
         </Box>
-        <Box sx={infoRowSx}>
-          <Typography variant="body1" sx={labelSx}>
-            구독 기간
-          </Typography>
-          <Typography variant="body1" sx={valueSx}>
-            무제한
-          </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="body1">구독 기간</Typography>
+          <Typography variant="body1">무제한</Typography>
         </Box>
       </Card>
 
@@ -50,13 +43,11 @@ const ProfileSettings = () => {
         <Box sx={cardHeaderSx}>
           <Typography sx={cardTitleSx}>자동 결제:</Typography>
         </Box>
-        <Box sx={infoRowSx}>
-          <Typography variant="body1" sx={labelSx}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Typography variant="body1" sx={{ mr: 2 }}>
             자동 결제 상태
           </Typography>
-          <Typography variant="body1" sx={valueSx}>
-            일반 간
-          </Typography>
+          <Typography variant="body1">일반 간</Typography>
         </Box>
       </Card>
 
@@ -65,19 +56,13 @@ const ProfileSettings = () => {
         <Box sx={cardHeaderSx}>
           <Typography sx={cardTitleSx}>개인 맞춤 설정 동의 여부</Typography>
         </Box>
-        <Box
-          sx={{
-            ...infoRowSx,
-            flexDirection: 'column',
-            alignItems: 'flex-start',
-            gap: 1,
-          }}
-        >
-          <Typography variant="body1">다크모드</Typography>
+        <Box>
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            다크모드
+          </Typography>
           <Typography variant="body1">Language Pack</Typography>
         </Box>
       </Card>
-
       {/* 버튼 그룹 */}
       <Box sx={buttonGroupSx}>
         <Link href="/setting/cancel" passHref>
