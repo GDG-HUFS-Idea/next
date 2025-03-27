@@ -3,7 +3,8 @@ import * as React from 'react'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import Footer from '@/widgets/footer'
 import './global.css'
-import RootHeader from '@/widgets/rootHeader'
+import Header from '@/widgets/header'
+import ClientSidebar from '@/pages/clientSidebar'
 
 export const metadata: Metadata = {
   title: 'SparkLens',
@@ -15,13 +16,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const user = {
+    name: 'Andrew Smith',
+    avatar: '/avatar.png',
+  }
   return (
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <RootHeader />
-          <main>{children}</main>
-          <Footer />
+          <Header />
+          <ClientSidebar user={user}>
+            <main>{children}</main>
+            <Footer />
+          </ClientSidebar>
         </AppRouterCacheProvider>
       </body>
     </html>
