@@ -1,168 +1,273 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
-  Collapse,
   Drawer,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  IconButton,
-  Avatar,
   Divider,
   Typography,
   ListItemButton,
   Box,
+  Avatar,
+  Collapse,
+  Tooltip,
 } from '@mui/material'
-import Historys from './sidebar/historys'
-import { Settings, LogOut, HelpCircle, ShieldCheck } from 'lucide-react'
+import { Settings, LogOut, HelpCircle, History } from 'lucide-react'
+
+const HEADER_HEIGHT = 72 // Header 높이(px) - 실제 헤더 높이에 맞게 조정 필요
 
 const Sidebar = ({
   user,
-  open,
-  setOpen,
   children,
 }: {
   user: any
-  open: boolean
-  setOpen: (open: boolean) => void
   children: React.ReactNode
 }) => {
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [adminOpen, setAdminOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
+  const [scrollPosition, setScrollPosition] = useState(0)
+  const [sidebarTop, setSidebarTop] = useState(HEADER_HEIGHT)
 
-  const toggleDrawer = () => {
-    setOpen(!open)
+  // 스크롤 이벤트 핸들러
+  const handleScroll = () => {
+    const position = window.pageYOffset
+    setScrollPosition(position)
+
+    // 스크롤 위치에 따라 사이드바 상단 위치 조정
+    // 스크롤이 헤더 높이보다 크면 사이드바를 상단에 고정, 아니면 헤더 아래로 배치
+    if (position < HEADER_HEIGHT) {
+      setSidebarTop(HEADER_HEIGHT - position)
+    } else {
+      setSidebarTop(0)
+    }
   }
 
-  const toggleSettings = () => {
-    setSettingsOpen(!settingsOpen)
-  }
+  // 스크롤 이벤트 리스너 등록 및 해제
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
-  const toggleAdmin = () => {
-    setAdminOpen(!adminOpen)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  const handleMenuClick = (menu: string) => {
+    setSelectedMenu((prev) => (prev === menu ? null : menu))
+    if (selectedMenu === menu) {
+      setOpen(false) // 메뉴 클릭 시 사이드바 축소
+    } else {
+      setOpen(true) // 메뉴 클릭 시 사이드바 확장
+    }
   }
 
   return (
-    <Box sx={{ display: 'flex', width: '100%' }}>
+    <Box sx={{ width: '100%' }}>
+      {/* 사이드바 */}
       <Drawer
         variant="permanent"
         sx={{
-          width: open ? 270 : 80,
+          width: open ? 270 : 60,
           flexShrink: 0,
-          display: 'flex',
-          flexDirection: 'column',
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
-
-            position: 'sticky',
-            height: '100vh',
-            width: open ? 270 : 80,
-            transition: 'width 0.3s',
+            position: 'fixed',
+            width: open ? 220 : 60,
+            whiteSpace: 'nowrap',
+            transition: 'width 0.3s ease-in-out, top 0.2s ease-out',
             overflowX: 'hidden',
-            overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
+            borderRight: '1px solid #ddd',
+            height: `calc(100% - ${sidebarTop}px)`,
+            top: sidebarTop,
           },
         }}
       >
         {/* 프로필 영역 */}
-        <Box sx={{ display: 'flex', alignItems: 'center', padding: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: 2,
+            paddingBottom: 2,
+            width: '100%',
+          }}
+        >
           <Avatar sx={{ width: 40, height: 40 }} src={user.avatar} />
           {open && (
-            <Box sx={{ marginLeft: 2 }}>
-              <Typography variant="caption" color="gray">
+            <Box sx={{ marginLeft: 2, marginTop: -1 }}>
+              <Typography variant="caption" color="textSecondary">
                 {user.role === 'admin' ? 'ADMINISTRATOR' : 'PRODUCT MANAGER'}
               </Typography>
-              <Typography variant="body1">{user.name}</Typography>
+              <Typography>{user.name}</Typography>
             </Box>
           )}
-          <IconButton onClick={toggleDrawer} sx={{ marginLeft: 'auto' }}>
-            {open ? '<' : '>'}
-          </IconButton>
         </Box>
-        <Divider />
+        <Divider sx={{ width: '100%' }} />
 
-        {/* 메뉴 리스트 */}
-        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
-          <List>
-            <Historys open={open} />
-          </List>
-          <Divider />
-          <List>
-            <ListItem disablePadding>
-              <ListItemButton onClick={toggleSettings}>
-                <ListItemIcon>
-                  <Settings size={20} />
-                </ListItemIcon>
-                {open && <ListItemText primary="Settings" />}
-              </ListItemButton>
-            </ListItem>
-            <Collapse in={settingsOpen} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Sub Setting 1" />
+        {/* 메뉴 리스트 - 높이를 90%로 조정 */}
+        <Box
+          sx={{
+            display: 'flex',
+            height: '90%',
+            flexDirection: 'column',
+            overflow: 'auto',
+          }}
+        >
+          <Box sx={{ display: 'flex' }}>
+            <List sx={{ width: '3em', alignItems: 'center' }}>
+              {/* History 버튼 */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => handleMenuClick('history')}
+                  sx={{
+                    borderRight:
+                      selectedMenu === 'history' ? '2px solid black' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 'auto' }}>
+                    <Tooltip
+                      title="History"
+                      placement="right"
+                      arrow
+                      disableInteractive
+                    >
+                      <Box>
+                        <History size={24} />
+                      </Box>
+                    </Tooltip>
+                  </ListItemIcon>
                 </ListItemButton>
-                <ListItemButton sx={{ pl: 4 }}>
-                  <ListItemText primary="Sub Setting 2" />
+              </ListItem>
+
+              {/* 설정 버튼 */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => handleMenuClick('settings')}
+                  sx={{
+                    borderRight:
+                      selectedMenu === 'settings' ? '2px solid black' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 'auto' }}>
+                    <Tooltip
+                      title="Settings"
+                      placement="right"
+                      arrow
+                      disableInteractive
+                    >
+                      <Box>
+                        <Settings size={24} />
+                      </Box>
+                    </Tooltip>
+                  </ListItemIcon>
                 </ListItemButton>
-              </List>
-            </Collapse>
-          </List>
-          {user.role === 'admin' && (
-            <>
-              <Divider />
-              <List>
-                <ListItem disablePadding>
-                  <ListItemButton onClick={toggleAdmin}>
-                    <ListItemIcon>
-                      <ShieldCheck size={20} />
-                    </ListItemIcon>
-                    {open && <ListItemText primary="Management" />}
+              </ListItem>
+
+              {/* 도움말 버튼 */}
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => handleMenuClick('help')}
+                  sx={{
+                    borderRight:
+                      selectedMenu === 'help' ? '2px solid black' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 'auto' }}>
+                    <Tooltip
+                      title="Help"
+                      placement="right"
+                      arrow
+                      disableInteractive
+                    >
+                      <Box>
+                        <HelpCircle size={24} />
+                      </Box>
+                    </Tooltip>
+                  </ListItemIcon>
+                </ListItemButton>
+              </ListItem>
+            </List>
+
+            {/* 세부 메뉴 */}
+            {selectedMenu === 'history' && (
+              <Collapse in={selectedMenu === 'history'} timeout="auto">
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="Recent Files" />
                   </ListItemButton>
-                </ListItem>
-                <Collapse in={adminOpen} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    <ListItemButton sx={{ pl: 4 }}>
-                      <ListItemText primary="User Management" />
-                    </ListItemButton>
-                  </List>
-                </Collapse>
-              </List>
-            </>
-          )}
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="Deleted Items" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            )}
+            {selectedMenu === 'settings' && (
+              <Collapse in={selectedMenu === 'settings'} timeout="auto">
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="Profile Settings" />
+                  </ListItemButton>
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="Privacy & Security" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            )}
+
+            {selectedMenu === 'help' && (
+              <Collapse in={selectedMenu === 'help'} timeout="auto">
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="FAQs" />
+                  </ListItemButton>
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="Contact Support" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            )}
+          </Box>
         </Box>
 
-        {/* 하단 고정 - 도움말 & 로그아웃 */}
-        <Box sx={{ paddingBottom: 0 }}>
-          <Divider />
-          <List>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <HelpCircle size={28} />
-                </ListItemIcon>
-                {open && <ListItemText primary="Help" />}
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <LogOut size={28} />
-                </ListItemIcon>
-                {open && <ListItemText primary="Logout Account" />}
-              </ListItemButton>
-            </ListItem>
-          </List>
+        <Divider sx={{ width: '100%' }} />
+
+        {/* 로그아웃 버튼 - 하단에 고정 */}
+        <Box sx={{ marginTop: 'auto', width: '100%' }}>
+          <ListItem disablePadding>
+            <ListItemButton sx={{ display: 'flex', alignItems: 'center' }}>
+              <ListItemIcon sx={{ minWidth: 'auto' }}>
+                <Tooltip
+                  title="Logout"
+                  placement="right"
+                  arrow
+                  disableInteractive
+                >
+                  <Box>
+                    <LogOut size={24} />
+                  </Box>
+                </Tooltip>
+              </ListItemIcon>
+              {open && <ListItemText primary="Logout" />}
+            </ListItemButton>
+          </ListItem>
         </Box>
       </Drawer>
 
+      {/* 메인 컨텐츠 */}
       <Box
         sx={{
           flexGrow: 1,
-          transition: 'margin 0.3s ease-in-out',
-          width: `calc(100% - ${open ? 270 : 80}px)`,
           minHeight: '100vh',
           overflow: 'auto',
         }}
