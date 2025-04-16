@@ -1,15 +1,7 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-export default function RedirectData() {
-  const searchParams = useSearchParams()
+import AuthCallback from '@/conponents/login/authCallback'
 
-  const tokenParam = searchParams!.get('token')
-  const searchTextParam = searchParams!.get('searchText')
-  return (
-    <>
-      Token: {tokenParam} <br />
-      SearchText: {searchTextParam}
-    </>
-  )
+export default function RedirectPage() {
+  return <AuthCallback />
 }
