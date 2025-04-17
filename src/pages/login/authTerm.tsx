@@ -20,6 +20,7 @@ export default function AuthTerm() {
   const ids = account?.term_ids ?? []
   const router = useRouter()
   const { data, isLoading } = useTermsQuery(ids)
+  console.log(ids, data)
   const signupMutation = useSignupMutation()
 
   const { agreements, setAgreement } = useTermsStore()
@@ -45,7 +46,7 @@ export default function AuthTerm() {
       { sessionId: session_id, agreements: user_agreements },
       {
         onSuccess: () => {
-          router.push('/idea/inputs') // ✅ 이제 useRouter()를 안전하게 사용 가능
+          router.push('/idea/input') // ✅ 이제 useRouter()를 안전하게 사용 가능
         },
         onError: (error) => {
           console.error('회원가입 요청 실패:', error)
