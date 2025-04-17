@@ -16,6 +16,8 @@ import {
   Tooltip,
 } from '@mui/material'
 import { Settings, LogOut, HelpCircle, History } from 'lucide-react'
+// 프로젝트 API 커스텀 훅 사용
+import { useMyProjects } from '@/shared/api/idea/myIdea'
 
 const HEADER_HEIGHT = 72 // Header 높이(px) - 실제 헤더 높이에 맞게 조정 필요
 
@@ -31,13 +33,19 @@ const Sidebar = ({
   const [scrollPosition, setScrollPosition] = useState(0)
   const [sidebarTop, setSidebarTop] = useState(HEADER_HEIGHT)
 
+  // useMyProjects hook 사용 - 필수 쿼리 파라미터 offset, limit 설정
+  const queryParams = {
+    offset: 0,
+    limit: 10,
+  }
+
+  const { data, refetch, isLoading } = useMyProjects(queryParams)
+
   // 스크롤 이벤트 핸들러
   const handleScroll = () => {
     const position = window.pageYOffset
     setScrollPosition(position)
 
-    // 스크롤 위치에 따라 사이드바 상단 위치 조정
-    // 스크롤이 헤더 높이보다 크면 사이드바를 상단에 고정, 아니면 헤더 아래로 배치
     if (position < HEADER_HEIGHT) {
       setSidebarTop(HEADER_HEIGHT - position)
     } else {
@@ -60,6 +68,11 @@ const Sidebar = ({
       setOpen(false) // 메뉴 클릭 시 사이드바 축소
     } else {
       setOpen(true) // 메뉴 클릭 시 사이드바 확장
+      if (menu === 'history') {
+        // history 메뉴 클릭 시 프로젝트 목록 가져오기
+        refetch()
+        console.log('projects:', data?.projects)
+      }
     }
   }
 
@@ -203,12 +216,36 @@ const Sidebar = ({
             {selectedMenu === 'history' && (
               <Collapse in={selectedMenu === 'history'} timeout="auto">
                 <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 2 }}>
-                    <ListItemText primary="Recent Files" />
-                  </ListItemButton>
-                  <ListItemButton sx={{ pl: 2 }}>
-                    <ListItemText primary="Deleted Items" />
-                  </ListItemButton>
+                  {isLoading ? (
+                    <ListItemButton sx={{ pl: 2 }}>
+                      <ListItemText primary="로딩 중..." />
+                    </ListItemButton>
+                  ) : (
+                    data?.projects?.map((project) => (
+                      <Tooltip
+                        key={project.id}
+                        title={project.name}
+                        placement="right"
+                        arrow
+                      >
+                        <ListItemButton sx={{ pl: 2 }}>
+                          <ListItemText
+                            primary={
+                              project.name.length > 8
+                                ? `${project.name.substring(0, 8)}...`
+                                : project.name
+                            }
+                          />
+                        </ListItemButton>
+                      </Tooltip>
+                    ))
+                  )}
+                  {(!data?.projects || data.projects.length === 0) &&
+                    !isLoading && (
+                      <ListItemButton sx={{ pl: 2 }}>
+                        <ListItemText primary="프로젝트가 없습니다" />
+                      </ListItemButton>
+                    )}
                 </List>
               </Collapse>
             )}
