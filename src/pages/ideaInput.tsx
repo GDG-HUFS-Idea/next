@@ -4,6 +4,12 @@ import React, { useState } from 'react'
 import { Box, Typography, Card, Button, TextField } from '@mui/material'
 import { styles } from '@/shared/ui/input/inputStyles'
 import IdeaProcessing from './ideaProcessing'
+import { postIdeaInput } from '@/shared/api/idea/ideaInput'
+
+interface data {
+  problem: string
+  solution: string
+}
 
 const IdeaInput: React.FC = () => {
   const [problemText, setProblemText] = useState('') // 문제 입력 상태
@@ -18,8 +24,11 @@ const IdeaInput: React.FC = () => {
   const handleSolutionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSolutionText(event.target.value)
   }
-  const handleStartAnalysis = () => {
+  const handleStartAnalysis = async () => {
     setIsProcessing(true)
+    const data: data = { problem: problemText, solution: solutionText }
+    const task_id = await postIdeaInput(data)
+    console.log('task_id:', task_id)
   }
   // 버튼 활성화 조건: 두 입력 필드 중 하나라도 값이 있으면 활성화
   const isButtonDisabled = !problemText.trim() || !solutionText.trim()
