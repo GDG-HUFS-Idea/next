@@ -1,60 +1,78 @@
+// shared/ui/input/inputStyles.ts
+
 export const styles = {
   container: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    padding: '24px',
-  },
-  card: {
-    width: '80%',
-    maxWidth: '900px',
-    padding: '24px',
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-    borderRadius: '12px',
-    position: 'relative', // 버튼을 카드 내부에 고정하기 위해 필요
-  },
-  section: {
-    marginBottom: '24px',
-  },
-  textField: {
     width: '100%',
-    marginTop: '12px',
-    overflow: 'auto',
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '2rem 1rem',
   },
-  buttonBox: {
-    paddingTop: '2%',
-    paddingLeft: '52%',
-    display: 'grid',
-    margin: '0 0',
-  },
-  startButton: {
-    backgroundColor: '#2979ff',
-    color: '#fff',
-    padding: '10px 20px',
+
+  // 입력 카드 스타일
+  card: {
+    padding: '2rem',
     borderRadius: '8px',
-    textTransform: 'none' as const,
-    maxWidth: '150px', // 너무 커지지 않도록 최대 크기 제한
-    minWidth: '100px', // 너무 작아지지 않도록 최소 크기 설정
-    '&:hover': {
-      backgroundColor: '#1565c0',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+  },
+
+  // 섹션 스타일
+  section: {
+    marginBottom: '2rem',
+    '& ul': {
+      paddingLeft: '1.5rem',
+      marginBottom: '1rem',
+    },
+    '& li': {
+      marginBottom: '0.5rem',
     },
   },
-  analysisContainer: {
+
+  // 텍스트 필드 스타일
+  textField: {
+    width: '100%',
+    marginTop: '1rem',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '4px',
+    },
+  },
+
+  // 버튼 컨테이너
+  buttonBox: {
     display: 'flex',
     justifyContent: 'center',
-    gap: '16px', // 카드 사이 여백 (spacing)
-    flexWrap: 'wrap', // 반응형으로 줄 바꿈 가능
-    paddingTop: '2%',
-    width: '100%',
-    maxWidth: '900px',
+    marginBottom: '3rem',
   },
+
+  // 시작 버튼 스타일
+  startButton: {
+    padding: '0.75rem 2.5rem',
+    fontSize: '1rem',
+    fontWeight: '600',
+    textTransform: 'none',
+    borderRadius: '50px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    minWidth: '200px',
+  },
+
+  // 분석 컨테이너
+  analysisContainer: {
+    display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
+    gap: '1.5rem',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+
+  // 분석 카드 스타일
   analysisCard: {
-    flex: '1 1 250px', // 카드가 일정 크기를 유지하면서 자동 정렬
-    minWidth: '250px', // 최소 크기 설정
-    maxWidth: '300px', // 최대 크기 제한
-    padding: '16px',
-    textAlign: 'center' as const,
-    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-    borderRadius: '12px',
+    padding: '1.5rem',
+    flex: { xs: '1 0 100%', md: '1 0 30%' },
+    borderRadius: '8px',
+    minHeight: '150px',
+    display: 'flex',
+    flexDirection: 'column',
+    '& h6': {
+      marginBottom: '0.75rem',
+    },
   },
 }

@@ -10,7 +10,6 @@ export default function AuthCallback() {
   const account = useAuthStore((store) => store.setUser)
 
   const code = searchParams.get('code') || '' // URL에서 code 가져오기
-  console.log(useGetAuthCallback(code), code)
   const { data, isLoading } = useGetAuthCallback(code)
   useEffect(() => {
     if (!data?.has_account) {
