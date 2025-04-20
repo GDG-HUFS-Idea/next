@@ -1,48 +1,291 @@
-import React from 'react'
-import { Box, Typography, Card } from '@mui/material'
-import { styles } from '../../shared/ui/analysis/analysisStyles'
-import { Zap, Brain, MessageCircleMore, Eye } from 'lucide-react'
+'use client'
 
-const AnalysisResults: React.FC = () => {
-  return (
-    <Card sx={styles.sectionCard}>
-      <Typography variant="h5" fontWeight="bold">
-        Analysis Results
-      </Typography>
-      <Box sx={styles.analysisContent}>
-        <Typography variant="body1">
-          제안하신 아이디어는 ~~~ 요소가 강점이 될 수 있고, ~~~ 부분에 위험성이
-          있습니다. 시장의 진출 타이밍을 하반기가 적절해보입니다.
-        </Typography>
-        <Box sx={styles.scoreBoard}>
-          <Card sx={styles.scoreCardRed} color="error">
-            <Typography color="red">
-              <Zap size={16} strokeWidth={1.75} /> 시장 규모
-            </Typography>
-            <Typography>80 / 100</Typography>
-          </Card>
-          <Card sx={styles.scoreCardYellow} color="warning">
-            <Typography color="#f5d400">
-              <Brain size={16} strokeWidth={1.75} /> 기회
-            </Typography>
-            <Typography>92 / 100</Typography>
-          </Card>
-          <Card sx={styles.scoreCardBlue} color="info">
-            <Typography color="#00c227">
-              <MessageCircleMore size={16} strokeWidth={1.75} /> 유사 서비스
-            </Typography>
-            <Typography>61 / 100</Typography>
-          </Card>
-          <Card sx={styles.scoreCardViolet} color="primary">
-            <Typography color="#232fd1">
-              <Eye size={16} strokeWidth={1.75} /> 한계점
-            </Typography>
-            <Typography>72 / 100</Typography>
-          </Card>
-        </Box>
-      </Box>
-    </Card>
-  )
+import React from 'react'
+import {
+  Box,
+  Typography,
+  Paper,
+  Card,
+  CardContent,
+  LinearProgress,
+  Stack,
+} from '@mui/material'
+
+// API 응답 타입 정의
+type AnalysisResultsProps = {
+  data?: {
+    review: string
+    project: {
+      id: number
+      name: string
+    }
+    market_stats: {
+      score: number
+      market_trend: {
+        domestic: Array<{
+          year: number
+          volume: number
+          currency: string
+          growth_rate: number
+        }>
+        global: Array<{
+          year: number
+          volume: number
+          currency: string
+          growth_rate: number
+        }>
+      }
+    }
+    similar_service: {
+      score: number
+    }
+    opportunity: {
+      score: number
+    }
+    limitation: {
+      score: number
+    }
+  }
 }
 
-export default AnalysisResults
+const formatCurrency = (value: number, currency: string) => {
+  if (currency === 'KRW') {
+    if (value >= 1000000000) {
+      return `${(value / 1000000000).toFixed(1)} 십억원`
+    } else {
+      return `${(value / 1000000).toFixed(1)} 백만원`
+    }
+  } else if (currency === 'USD') {
+    if (value >= 1000000000) {
+      return `$${(value / 1000000000).toFixed(1)} B`
+    } else {
+      return `$${(value / 1000000).toFixed(1)} M`
+    }
+  }
+  return `${value} ${currency}`
+}
+
+export default function AnalysisResults({ data }: AnalysisResultsProps) {
+  if (!data) {
+    return null
+  }
+
+  // 차트 데이터 준비
+  const chartData =
+    data.market_stats?.market_trend?.domestic.map((item, index) => {
+      const globalItem = data.market_stats.market_trend.global[index] || {
+        volume: 0,
+        growth_rate: 0,
+      }
+      return {
+        year: item.year,
+        domestic: item.volume / 1000000000, // 가독성을 위해 십억 단위로 변환
+        domesticGrowth: item.growth_rate * 100,
+        global: globalItem.volume / 1000000000, // 차트용으로 십억 단위 변환
+        globalGrowth: globalItem.growth_rate * 100,
+      }
+    }) || []
+
+  // 점수 데이터
+  const scoreItems = [
+    {
+      name: '시장 점수',
+      score: data.market_stats?.score || 0,
+      color:
+        data.market_stats?.score > 80
+          ? '#f7b500'
+          : data.market_stats?.score > 60
+          ? '#ffce52'
+          : '#fdde89',
+    },
+    {
+      name: '유사 서비스',
+      score: data.similar_service?.score || 0,
+      color:
+        data.similar_service?.score > 80
+          ? '#f7b500'
+          : data.similar_service?.score > 60
+          ? '#ffce52'
+          : '#fdde89',
+    },
+    {
+      name: '시장 기회',
+      score: data.opportunity?.score || 0,
+      color:
+        data.opportunity?.score > 80
+          ? '#8fd14f'
+          : data.opportunity?.score > 60
+          ? '#a9dc71'
+          : '#c3e79b',
+    },
+    {
+      name: '한계점',
+      score: data.limitation?.score || 0,
+      color:
+        data.limitation?.score > 80
+          ? '#7272c7'
+          : data.limitation?.score > 60
+          ? '#9292d5'
+          : '#b1b1e3',
+    },
+  ]
+
+  // 마지막 데이터 포인트에서 시장 규모 값 가져오기
+  const domesticData = data.market_stats?.market_trend?.domestic || []
+  const globalData = data.market_stats?.market_trend?.global || []
+  const lastDomesticVolume =
+    domesticData.length > 0 ? domesticData[domesticData.length - 1].volume : 0
+  const lastGlobalVolume =
+    globalData.length > 0 ? globalData[globalData.length - 1].volume : 0
+  const lastDomesticCurrency =
+    domesticData.length > 0
+      ? domesticData[domesticData.length - 1].currency
+      : 'KRW'
+  const lastGlobalCurrency =
+    globalData.length > 0 ? globalData[globalData.length - 1].currency : 'USD'
+
+  return (
+    <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
+      <Typography variant="h6" component="h2" gutterBottom fontWeight="bold">
+        Analysis Results
+      </Typography>
+
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+        {/* 왼쪽 - 리뷰 & 차트 */}
+        <Box sx={{ flex: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
+            <Box
+              sx={{
+                width: 24,
+                height: 24,
+                bgcolor: '#2196f3',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                color: 'white',
+                borderRadius: '4px',
+                mr: 1.5,
+              }}
+            >
+              👍
+            </Box>
+            <Typography variant="subtitle1" fontWeight="bold">
+              간략평
+            </Typography>
+          </Box>
+
+          <Typography variant="body2" sx={{ ml: 4, mb: 3 }}>
+            {data.review || '분석결과가 아직 없습니다.'}
+          </Typography>
+        </Box>
+
+        {/* 오른쪽 - 점수 */}
+        <Box sx={{ flex: 1 }}>
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              분석 총 점수
+            </Typography>
+
+            {/* 점수 카드 */}
+            <Stack spacing={2}>
+              {scoreItems.map((item, index) => (
+                <Card
+                  key={index}
+                  variant="outlined"
+                  sx={{ borderColor: item.color }}
+                >
+                  <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        {item.name}
+                      </Typography>
+                      <Typography variant="body1" fontWeight="bold">
+                        {item.score} / 100
+                      </Typography>
+                    </Box>
+                    <LinearProgress
+                      variant="determinate"
+                      value={item.score}
+                      sx={{
+                        height: 8,
+                        mt: 1,
+                        bgcolor: '#f5f5f5',
+                        '& .MuiLinearProgress-bar': {
+                          backgroundColor: item.color,
+                        },
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              ))}
+            </Stack>
+          </Box>
+
+          {/* 시장 트렌드 바 */}
+          <Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 1,
+              }}
+            >
+              <Typography variant="body2">
+                국내 시장 기회 지수 (5/10)
+              </Typography>
+              <Typography variant="body2" fontWeight="bold">
+                {formatCurrency(lastDomesticVolume, lastDomesticCurrency)}
+              </Typography>
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={50}
+              sx={{
+                height: 12,
+                mb: 2,
+                bgcolor: '#f5f5f5',
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: '#4caf50',
+                },
+              }}
+            />
+
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 1,
+              }}
+            >
+              <Typography variant="body2">
+                글로벌 시장 기회 지수 (5/10)
+              </Typography>
+              <Typography variant="body2" fontWeight="bold">
+                {formatCurrency(lastGlobalVolume, lastGlobalCurrency)}
+              </Typography>
+            </Box>
+            <LinearProgress
+              variant="determinate"
+              value={50}
+              sx={{
+                height: 12,
+                bgcolor: '#f5f5f5',
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: '#2196f3',
+                },
+              }}
+            />
+          </Box>
+        </Box>
+      </Stack>
+    </Paper>
+  )
+}

@@ -1,85 +1,168 @@
+'use client'
+
 import React from 'react'
 import {
   Box,
   Typography,
-  Card,
-  Grid2,
-  CardContent,
-  Button,
+  Paper,
+  Divider,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Chip,
+  Stack,
 } from '@mui/material'
-import { ExternalLink } from 'lucide-react'
-import { styles } from '../../shared/ui/analysis/opportunitiesStyles'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ArrowRightIcon from '@mui/icons-material/ArrowRight'
+import LightbulbIcon from '@mui/icons-material/Lightbulb'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
 
-const Opportunities: React.FC = () => {
-  return (
-    <Box sx={styles.sectionCard}>
-      <Typography variant="h6">🔍 기회 / 관련 지원 사업</Typography>
-      <Box sx={styles.opportunityList}>
-        <Grid2 container spacing={5}>
-          <Grid2 size={6}>
-            <Card sx={styles.opportunityCard}>
-              <CardContent>
-                <Box display="flex">
-                  <Typography variant="subtitle1">지원 사업 1</Typography>
-                  <Button
-                    href="https://example.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{ marginLeft: 'auto' }}
-                  >
-                    <ExternalLink color="black" />
-                  </Button>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  정부 지원 정책 또는 각종 혜택
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid2>
-          <Grid2 size={6}>
-            <Card sx={styles.opportunityCard}>
-              <CardContent>
-                <Box display="flex">
-                  <Typography variant="subtitle1">지원 사업 2</Typography>
-                  <Button
-                    href="https://example.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{ marginLeft: 'auto' }}
-                  >
-                    <ExternalLink color="black" />
-                  </Button>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  중소기업 지원 프로그램
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid2>
-          <Grid2 size={6}>
-            <Card sx={styles.opportunityCard}>
-              <CardContent>
-                <Box display="flex">
-                  <Typography variant="subtitle1">지원 사업 3</Typography>
-                  <Button
-                    href="https://example.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{ marginLeft: 'auto' }}
-                  >
-                    <ExternalLink color="black" />
-                  </Button>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  기타 제도
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid2>
-        </Grid2>
-      </Box>
-    </Box>
-  )
+// API 응답 타입 정의
+type OpportunityData = {
+  score: number
+  items: string[]
 }
 
-export default Opportunities
+type LimitationData = {
+  score: number
+  items: Array<{
+    category: string
+    detail: string
+    impact: string
+    solution: string
+  }>
+}
+
+type OpportunitiesProps = {
+  opportunityData?: OpportunityData
+  limitationData?: LimitationData
+}
+
+export default function Opportunities({
+  opportunityData,
+  limitationData,
+}: OpportunitiesProps) {
+  if (!opportunityData && !limitationData) {
+    return null
+  }
+
+  return (
+    <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
+        <Box
+          sx={{
+            width: 24,
+            height: 24,
+            bgcolor: '#4caf50',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'white',
+            borderRadius: '4px',
+            mr: 1.5,
+          }}
+        >
+          ✨
+        </Box>
+        <Typography variant="h6" fontWeight="bold">
+          시장 기회
+        </Typography>
+      </Box>
+
+      {/* 기회 요인 섹션 */}
+      {opportunityData && (
+        <Box sx={{ ml: 4, mb: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <LightbulbIcon sx={{ color: '#4caf50', mr: 1 }} />
+            <Typography variant="subtitle1" fontWeight="bold">
+              기회 요인 (점수: {opportunityData.score}/100)
+            </Typography>
+          </Box>
+
+          <List dense disablePadding>
+            {opportunityData.items.map((item, index) => (
+              <ListItem key={index} alignItems="flex-start" sx={{ py: 0.5 }}>
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ArrowRightIcon sx={{ color: '#4caf50' }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={item}
+                  primaryTypographyProps={{ variant: 'body2' }}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      )}
+
+      {/* 한계점 분석 섹션 */}
+      {limitationData && (
+        <Box sx={{ ml: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <ErrorOutlineIcon sx={{ color: '#f44336', mr: 1 }} />
+            <Typography variant="subtitle1" fontWeight="bold">
+              한계점 분석 (점수: {limitationData.score}/100)
+            </Typography>
+          </Box>
+
+          {limitationData.items.map((item, index) => (
+            <Accordion
+              key={index}
+              sx={{ mb: 1, '&:before': { display: 'none' } }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`panel${index}-content`}
+                id={`panel${index}-header`}
+                sx={{ bgcolor: 'rgba(0, 0, 0, 0.02)' }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Chip
+                    label={item.category}
+                    size="small"
+                    sx={{
+                      mr: 2,
+                      bgcolor: 'rgba(244, 67, 54, 0.1)',
+                      color: '#f44336',
+                    }}
+                  />
+                  <Typography variant="body2" fontWeight="medium">
+                    {item.detail}
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      영향
+                    </Typography>
+                    <Typography variant="body2">{item.impact}</Typography>
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      해결책
+                    </Typography>
+                    <Typography variant="body2">{item.solution}</Typography>
+                  </Box>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Box>
+      )}
+    </Paper>
+  )
+}
