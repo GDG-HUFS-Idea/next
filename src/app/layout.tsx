@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 import * as React from 'react'
+import Header from '@/widgets/header/header'
+import Footer from '@/widgets/footer/footer'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
-import Footer from '@/widgets/footer'
-import './global.css'
-import Header from '@/widgets/header'
-import ClientSidebar from '@/pages/clientSidebar'
+import QueryProvider from '@/pages/queryProvider'
 
 export const metadata: Metadata = {
   title: 'SparkLens',
@@ -13,22 +12,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
-  const user = {
-    name: 'Andrew Smith',
-    avatar: '/avatar.png',
-  }
+}>) {
   return (
     <html lang="en">
       <body>
-        <AppRouterCacheProvider>
-          <Header />
-          <ClientSidebar user={user}>
+        <AppRouterCacheProvider options={{ key: 'css' }}>
+          <QueryProvider>
+            <Header />
             <main>{children}</main>
             <Footer />
-          </ClientSidebar>
+          </QueryProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
