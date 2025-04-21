@@ -1,15 +1,7 @@
 'use client'
 
 import React from 'react'
-import {
-  Box,
-  Typography,
-  Paper,
-  Card,
-  CardContent,
-  LinearProgress,
-  Stack,
-} from '@mui/material'
+import { Box, Typography, Paper, Card, CardContent, Stack } from '@mui/material'
 
 // API 응답 타입 정의
 type AnalysisResultsProps = {
@@ -152,25 +144,10 @@ export default function AnalysisResults({ data }: AnalysisResultsProps) {
 
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
         {/* 왼쪽 - 리뷰 & 차트 */}
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-            <Box
-              sx={{
-                width: 24,
-                height: 24,
-                bgcolor: '#2196f3',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: 'white',
-                borderRadius: '4px',
-                mr: 1.5,
-              }}
-            >
-              👍
-            </Box>
             <Typography variant="subtitle1" fontWeight="bold">
-              간략평
+              👍 간략평
             </Typography>
           </Box>
 
@@ -192,7 +169,7 @@ export default function AnalysisResults({ data }: AnalysisResultsProps) {
                 <Card
                   key={index}
                   variant="outlined"
-                  sx={{ borderColor: item.color }}
+                  sx={{ backgroundColor: item.color }}
                 >
                   <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                     <Box
@@ -209,18 +186,6 @@ export default function AnalysisResults({ data }: AnalysisResultsProps) {
                         {item.score} / 100
                       </Typography>
                     </Box>
-                    <LinearProgress
-                      variant="determinate"
-                      value={item.score}
-                      sx={{
-                        height: 8,
-                        mt: 1,
-                        bgcolor: '#f5f5f5',
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: item.color,
-                        },
-                      }}
-                    />
                   </CardContent>
                 </Card>
               ))}
@@ -235,6 +200,7 @@ export default function AnalysisResults({ data }: AnalysisResultsProps) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 mb: 1,
+                backgroundColor: 'yellowgreen',
               }}
             >
               <Typography variant="body2">
@@ -244,18 +210,6 @@ export default function AnalysisResults({ data }: AnalysisResultsProps) {
                 {formatCurrency(lastDomesticVolume, lastDomesticCurrency)}
               </Typography>
             </Box>
-            <LinearProgress
-              variant="determinate"
-              value={50}
-              sx={{
-                height: 12,
-                mb: 2,
-                bgcolor: '#f5f5f5',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#4caf50',
-                },
-              }}
-            />
 
             <Box
               sx={{
@@ -263,6 +217,7 @@ export default function AnalysisResults({ data }: AnalysisResultsProps) {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 mb: 1,
+                backgroundColor: 'skyblue',
               }}
             >
               <Typography variant="body2">
@@ -272,17 +227,6 @@ export default function AnalysisResults({ data }: AnalysisResultsProps) {
                 {formatCurrency(lastGlobalVolume, lastGlobalCurrency)}
               </Typography>
             </Box>
-            <LinearProgress
-              variant="determinate"
-              value={50}
-              sx={{
-                height: 12,
-                bgcolor: '#f5f5f5',
-                '& .MuiLinearProgress-bar': {
-                  backgroundColor: '#2196f3',
-                },
-              }}
-            />
           </Box>
         </Box>
       </Stack>

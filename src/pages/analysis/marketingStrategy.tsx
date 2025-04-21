@@ -45,23 +45,8 @@ export default function MarketingStrategy({ data }: MarketingStrategyProps) {
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
-        <Box
-          sx={{
-            width: 24,
-            height: 24,
-            bgcolor: '#ff9800',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: 'white',
-            borderRadius: '4px',
-            mr: 1.5,
-          }}
-        >
-          📣
-        </Box>
         <Typography variant="h6" fontWeight="bold">
-          지원 프로그램
+          📣 지원 프로그램
         </Typography>
       </Box>
 

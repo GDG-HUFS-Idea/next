@@ -13,9 +13,9 @@ import MarketingStrategy from '@/pages/analysis/marketingStrategy'
 import { useGetIdeaOverview } from '@/shared/api/idea/getIdeaOverview'
 
 export default function AnalysisPage() {
-  const projectId = 8 // 라우트 파라미터나 props에서 가져오는 것이 좋습니다
+  const projectId = 6
   const { data, isError, error } = useGetIdeaOverview(projectId)
-  console.log(data)
+  console.log('data', data)
   // 에러 상태 처리
   if (isError) {
     return (

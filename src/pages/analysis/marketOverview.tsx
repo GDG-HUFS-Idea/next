@@ -25,6 +25,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Bar,
+  ComposedChart,
 } from 'recharts'
 
 // API 응답 타입 정의
@@ -112,23 +114,8 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-        <Box
-          sx={{
-            width: 24,
-            height: 24,
-            bgcolor: '#2196f3',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: 'white',
-            borderRadius: '4px',
-            mr: 1.5,
-          }}
-        >
-          📊
-        </Box>
         <Typography variant="h6" fontWeight="bold">
-          시장 개요
+          📊 시장 개요
         </Typography>
       </Box>
 
@@ -160,7 +147,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
           </Typography>
           <Box sx={{ height: 220 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
+              <ComposedChart
                 data={domesticChartData}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
@@ -177,14 +164,12 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
                   }}
                 />
                 <Legend />
-                <Line
+                <Bar
                   yAxisId="left"
-                  type="monotone"
                   dataKey="volume"
                   name="시장 규모 (십억)"
-                  stroke="#4caf50"
-                  strokeWidth={2}
-                  activeDot={{ r: 8 }}
+                  fill="#4caf50"
+                  barSize={30}
                 />
                 <Line
                   yAxisId="right"
@@ -194,7 +179,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
                   stroke="#4caf50"
                   strokeDasharray="5 5"
                 />
-              </LineChart>
+              </ComposedChart>
             </ResponsiveContainer>
           </Box>
         </Box>
@@ -206,7 +191,7 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
           </Typography>
           <Box sx={{ height: 220 }}>
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
+              <ComposedChart
                 data={globalChartData}
                 margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
               >
@@ -223,14 +208,12 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
                   }}
                 />
                 <Legend />
-                <Line
+                <Bar
                   yAxisId="left"
-                  type="monotone"
                   dataKey="volume"
                   name="시장 규모 (십억)"
-                  stroke="#2196f3"
-                  strokeWidth={2}
-                  activeDot={{ r: 8 }}
+                  fill="#2196f3"
+                  barSize={30}
                 />
                 <Line
                   yAxisId="right"
@@ -240,96 +223,9 @@ export default function MarketOverview({ data }: MarketOverviewProps) {
                   stroke="#2196f3"
                   strokeDasharray="5 5"
                 />
-              </LineChart>
+              </ComposedChart>
             </ResponsiveContainer>
           </Box>
-        </Box>
-      </Stack>
-
-      {/* 시장 상세 정보 */}
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ ml: 1 }}>
-        {/* 국내 시장 */}
-        <Box sx={{ flex: 1 }}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                국내 시장
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>연도</TableCell>
-                      <TableCell align="right">시장 규모</TableCell>
-                      <TableCell align="right">성장률</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.market_trend.domestic.map((item) => (
-                      <TableRow key={item.year}>
-                        <TableCell>{item.year}</TableCell>
-                        <TableCell align="right">
-                          {formatCurrency(item.volume, item.currency)}
-                        </TableCell>
-                        <TableCell align="right">
-                          {formatGrowthRate(item.growth_rate)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                평균 연간 매출:{' '}
-                {formatCurrency(
-                  data.avg_revenue.domestic.amount,
-                  data.avg_revenue.domestic.currency
-                )}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* 글로벌 시장 */}
-        <Box sx={{ flex: 1 }}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                글로벌 시장
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>연도</TableCell>
-                      <TableCell align="right">시장 규모</TableCell>
-                      <TableCell align="right">성장률</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.market_trend.global.map((item) => (
-                      <TableRow key={item.year}>
-                        <TableCell>{item.year}</TableCell>
-                        <TableCell align="right">
-                          {formatCurrency(item.volume, item.currency)}
-                        </TableCell>
-                        <TableCell align="right">
-                          {formatGrowthRate(item.growth_rate)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                평균 연간 매출:{' '}
-                {formatCurrency(
-                  data.avg_revenue.global.amount,
-                  data.avg_revenue.global.currency
-                )}
-              </Typography>
-            </CardContent>
-          </Card>
         </Box>
       </Stack>
     </Paper>

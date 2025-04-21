@@ -41,23 +41,8 @@ export default function ExpectedBM({ data }: ExpectedBMProps) {
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-        <Box
-          sx={{
-            width: 24,
-            height: 24,
-            bgcolor: '#2196f3',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: 'white',
-            borderRadius: '4px',
-            mr: 1.5,
-          }}
-        >
-          💰
-        </Box>
         <Typography variant="h6" fontWeight="bold">
-          예상 BM
+          💰 예상 BM
         </Typography>
       </Box>
 
@@ -118,7 +103,7 @@ export default function ExpectedBM({ data }: ExpectedBMProps) {
                     fontWeight: 'bold',
                   }}
                 >
-                  {item.order}
+                  {index + 1}
                 </Box>
               </ListItemIcon>
               <ListItemText

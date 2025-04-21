@@ -29,23 +29,8 @@ export default function MainTarget({ data }: MainTargetProps) {
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
-        <Box
-          sx={{
-            width: 24,
-            height: 24,
-            bgcolor: '#3f51b5',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            color: 'white',
-            borderRadius: '4px',
-            mr: 1.5,
-          }}
-        >
-          👥
-        </Box>
         <Typography variant="h6" fontWeight="bold">
-          주 타겟층
+          👥 주 타겟층
         </Typography>
       </Box>
 
@@ -66,7 +51,7 @@ export default function MainTarget({ data }: MainTargetProps) {
                 mr: 2,
               }}
             >
-              {target.order}
+              {index + 1}
             </Box>
             <Typography variant="subtitle1" fontWeight="bold">
               {target.target}
