@@ -1,23 +1,8 @@
 'use client'
 
 import React from 'react'
+import { Box, Typography, Paper, Chip, Stack } from '@mui/material'
 import {
-  Box,
-  Typography,
-  Paper,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Card,
-  CardContent,
-  Stack,
-} from '@mui/material'
-import {
-  LineChart,
   Line,
   XAxis,
   YAxis,
