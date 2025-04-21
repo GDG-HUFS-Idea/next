@@ -13,21 +13,9 @@ import MarketingStrategy from '@/pages/analysis/marketingStrategy'
 import { useGetIdeaOverview } from '@/shared/api/idea/getIdeaOverview'
 
 export default function AnalysisPage() {
-  const projectId = 6
+  const projectId = 10
   const { data, isError, error } = useGetIdeaOverview(projectId)
   console.log('data', data)
-  // 에러 상태 처리
-  if (isError) {
-    return (
-      <Box sx={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-        <Alert severity="error">
-          {error instanceof Error
-            ? error.message
-            : '분석 데이터를 불러오는데 실패했습니다'}
-        </Alert>
-      </Box>
-    )
-  }
 
   return (
     <Box

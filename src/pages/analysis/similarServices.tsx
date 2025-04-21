@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef } from 'react'
-import { Box, Typography, Card, Stack, Alert, Paper } from '@mui/material'
+import { Box, Typography, Card, Stack, Paper } from '@mui/material'
 import { useDraggable } from '@/shared/api/useDraggalbe'
 
 // 제공된 데이터 구조에 맞춘 타입 정의
@@ -19,9 +19,7 @@ type SimilarServiceData = {
 }
 
 type SimilarServicesProps = {
-  data?: {
-    similar_service?: SimilarServiceData
-  }
+  data?: SimilarServiceData
 }
 
 export default function SimilarServices({ data }: SimilarServicesProps) {
@@ -32,40 +30,20 @@ export default function SimilarServices({ data }: SimilarServicesProps) {
   const { onMouseDown, onMouseMove, onMouseUp, onMouseLeave } =
     useDraggable(scrollerRef)
 
-  // 데이터가 없는 경우
-  if (!data || !data.similar_service) {
-    return (
-      <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" fontWeight="bold">
-            유사 서비스
-          </Typography>
-        </Box>
-        <Alert severity="info" sx={{ mt: 1 }}>
-          유사 서비스 데이터가 없습니다.
-        </Alert>
-      </Paper>
-    )
-  }
+  const score = data?.score
+  const items = data?.items
 
-  const { score, items } = data.similar_service
+  // 데이터가 없는 경우
+  if (!data) {
+    return null
+  }
 
   // 점수만 있고 아이템이 없는 경우
   if (score !== undefined && (!items || items.length === 0)) {
     return (
       <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{
-              color: '#333',
-              fontWeight: 'bold',
-              fontSize: '1.5rem',
-            }}
-          >
-            유사 서비스
-          </Typography>
+          <Typography variant="h6">유사 서비스</Typography>
           <Typography
             variant="body2"
             component="span"
@@ -78,9 +56,6 @@ export default function SimilarServices({ data }: SimilarServicesProps) {
             점수: {score}/100
           </Typography>
         </Box>
-        <Alert severity="info" sx={{ mt: 1 }}>
-          유사 서비스 상세 데이터가 없습니다.
-        </Alert>
       </Paper>
     )
   }
@@ -89,32 +64,7 @@ export default function SimilarServices({ data }: SimilarServicesProps) {
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <Box
-          component="span"
-          sx={{
-            bgcolor: '#3366ff',
-            color: 'white',
-            width: 32,
-            height: 32,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: '4px',
-            mr: 1,
-            fontSize: '1.25rem',
-          }}
-        >
-          유
-        </Box>
-        <Typography
-          variant="h6"
-          component="h2"
-          sx={{
-            color: '#333',
-            fontWeight: 'bold',
-            fontSize: '1.5rem',
-          }}
-        >
+        <Typography variant="h6" component="h2">
           유사 서비스
         </Typography>
         {score !== undefined && (
@@ -163,19 +113,16 @@ export default function SimilarServices({ data }: SimilarServicesProps) {
               sx={{
                 width: 300,
                 minWidth: 300,
-                bgcolor: '#000000',
-                color: 'white',
                 flexShrink: 0,
-                borderRadius: 0,
+                borderRadius: 1,
                 pointerEvents: 'none', // 카드 내부 요소에 대한 마우스 이벤트 방지
                 height: 'auto', // 자동 높이 설정
                 minHeight: 180, // 최소 높이 설정
+                backgroundColor: '#f5f5f5',
               }}
             >
               <Box
                 sx={{
-                  background:
-                    'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7))',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'flex-start', // 상단부터 컨텐츠 시작
@@ -183,8 +130,7 @@ export default function SimilarServices({ data }: SimilarServicesProps) {
                 }}
               >
                 <Typography variant="h5" component="h2" sx={{ mb: 1 }}>
-                  {/* 요약에서 앱 이름만 추출 (예: "Noom은..." -> "Noom") */}
-                  {service.summary?.split('은')[0]?.split('는')[0] || '서비스'}
+                  {service.summary}
                 </Typography>
                 <Typography variant="body2" sx={{ fontSize: '0.85rem', mb: 1 }}>
                   {service.description || '설명 없음'}
@@ -202,9 +148,7 @@ export default function SimilarServices({ data }: SimilarServicesProps) {
           ))}
         </Stack>
       ) : (
-        <Alert severity="info" sx={{ mt: 1 }}>
-          유사 서비스 아이템 데이터가 없습니다.
-        </Alert>
+        <></>
       )}
     </Paper>
   )
