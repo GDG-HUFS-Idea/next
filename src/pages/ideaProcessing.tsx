@@ -103,14 +103,14 @@ const IdeaProcessing: React.FC<IdeaProcessingProps> = ({
         <CircularProgress
           variant="determinate"
           value={100}
-          size={200}
+          size={400}
           thickness={4}
           sx={processingStyles.backgroundProgress}
         />
         <CircularProgress
           variant="determinate"
           value={animatedProgress}
-          size={200}
+          size={400}
           thickness={4}
           sx={processingStyles.foregroundProgress}
         />

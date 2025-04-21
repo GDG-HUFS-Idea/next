@@ -1,78 +1,103 @@
-// shared/ui/input/inputStyles.ts
-
+// 스타일 객체
 export const styles = {
   container: {
-    width: '100%',
-    maxWidth: '1200px',
+    maxWidth: '1100px',
     margin: '0 auto',
-    padding: '2rem 1rem',
+    padding: '24px',
   },
-
-  // 입력 카드 스타일
-  card: {
-    padding: '2rem',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-  },
-
-  // 섹션 스타일
-  section: {
-    marginBottom: '2rem',
-    '& ul': {
-      paddingLeft: '1.5rem',
-      marginBottom: '1rem',
-    },
-    '& li': {
-      marginBottom: '0.5rem',
-    },
-  },
-
-  // 텍스트 필드 스타일
-  textField: {
-    width: '100%',
-    marginTop: '1rem',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '4px',
-    },
-  },
-
-  // 버튼 컨테이너
-  buttonBox: {
+  tabContainer: {
     display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '3rem',
+    borderBottom: '1px solid #e0e0e0',
+    mb: 4,
   },
-
-  // 시작 버튼 스타일
+  tab: {
+    py: 2,
+    px: 4,
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    position: 'relative',
+  },
+  activeTab: {
+    borderBottom: '2px solid #1976d2',
+    color: '#1976d2',
+  },
+  mainCard: {
+    p: 4,
+    borderRadius: '12px',
+    boxShadow:
+      'rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px',
+    backgroundColor: 'white',
+  },
+  section: {
+    mb: 4,
+  },
+  sectionTitle: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 1.5,
+    mb: 2,
+    fontWeight: 'bold',
+  },
+  listItem: {
+    ml: 2,
+    mb: 1,
+    color: '#555',
+    fontSize: '0.95rem',
+  },
+  textField: {
+    mt: 2,
+    width: '100%',
+    '& .MuiOutlinedInput-root': {
+      borderRadius: '8px',
+    },
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    mt: 3,
+  },
   startButton: {
-    padding: '0.75rem 2.5rem',
-    fontSize: '1rem',
-    fontWeight: '600',
-    textTransform: 'none',
-    borderRadius: '50px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    minWidth: '200px',
+    borderRadius: '8px',
+    fontWeight: 'bold',
+    py: 1,
+    px: 3,
+    backgroundColor: '#4361ee',
+    '&:hover': {
+      backgroundColor: '#3a56e0',
+    },
   },
-
-  // 분석 컨테이너
   analysisContainer: {
     display: 'flex',
-    flexDirection: { xs: 'column', md: 'row' },
-    gap: '1.5rem',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    mt: 6,
+    gap: 2,
   },
-
-  // 분석 카드 스타일
   analysisCard: {
-    padding: '1.5rem',
-    flex: { xs: '1 0 100%', md: '1 0 30%' },
-    borderRadius: '8px',
-    minHeight: '150px',
+    p: 3,
+    borderRadius: '12px',
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    '& h6': {
-      marginBottom: '0.75rem',
+    alignItems: 'center',
+    textAlign: 'center',
+    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+    backgroundColor: '#f9fafb',
+    '&:hover': {
+      transform: 'translateY(-4px)',
+      boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
     },
+  },
+  analysisIcon: {
+    fontSize: '48px',
+    mb: 2,
+    color: '#4361ee',
+  },
+  analysisTitle: {
+    fontWeight: 'bold',
+    mb: 1,
+  },
+  analysisDesc: {
+    color: '#666',
+    fontSize: '0.875rem',
   },
 }

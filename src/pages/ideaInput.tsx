@@ -1,11 +1,26 @@
 'use client'
 
+import ShowChartIcon from '@mui/icons-material/ShowChart'
+
 import React, { useState } from 'react'
-import { Box, Typography, Card, Button, TextField } from '@mui/material'
-import { styles } from '@/shared/ui/input/inputStyles'
-import IdeaProcessing from './ideaProcessing'
+import {
+  Box,
+  Typography,
+  Card,
+  Button,
+  TextField,
+  Stack,
+  Paper,
+} from '@mui/material'
 import { usePostIdeaInput, IdeaData } from '@/shared/api/idea/ideaInput'
 import { ideaStore } from '@/shared/store/ideaStore'
+import IdeaProcessing from './ideaProcessing'
+import SettingsIcon from '@mui/icons-material/Settings'
+import LightbulbIcon from '@mui/icons-material/Lightbulb'
+import AssessmentIcon from '@mui/icons-material/Assessment'
+import BusinessIcon from '@mui/icons-material/Business'
+import SendIcon from '@mui/icons-material/Send'
+import { styles } from '@/shared/ui/input/inputStyles'
 
 const IdeaInput: React.FC = () => {
   const [problemText, setProblemText] = useState('') // 문제 입력 상태
@@ -67,126 +82,112 @@ const IdeaInput: React.FC = () => {
         <IdeaProcessing taskId={taskId} username={username} />
       ) : (
         <Box sx={styles.container}>
-          {/* 문제 및 솔루션 입력 카드 */}
-          <Card sx={styles.card}>
+          {/* 메인 카드 */}
+          <Paper elevation={0} sx={styles.mainCard}>
+            {/* Problem 섹션 */}
             <Box sx={styles.section}>
-              <Typography variant="h5" fontWeight="bold">
-                🔹 Problem
+              <Typography variant="h5" sx={styles.sectionTitle}>
+                <SettingsIcon /> Problem
               </Typography>
-              <ul>
-                <li>평소 불편함을 느꼈던 내용</li>
-                <li>adsdsadsa</li>
-                <li>asdas</li>
-              </ul>
+              <Box component="ul" sx={{ pl: 2, m: 0 }}>
+                <Typography component="li" sx={styles.listItem}>
+                  평소 불편함을 느꼈던 기존 문제점이나 불편함
+                </Typography>
+                <Typography component="li" sx={styles.listItem}>
+                  문제를 해결하고자 하는 개발 동기
+                </Typography>
+              </Box>
               <TextField
                 multiline
                 minRows={3}
                 maxRows={10}
                 variant="outlined"
-                placeholder=""
+                placeholder="문제점과 개발 동기를 자세히 작성해주세요"
                 sx={styles.textField}
                 value={problemText}
                 onChange={handleProblemChange}
               />
             </Box>
 
+            {/* Solution 섹션 */}
             <Box sx={styles.section}>
-              <Typography variant="h5" fontWeight="bold">
-                💡 Solution
+              <Typography variant="h5" sx={styles.sectionTitle}>
+                <LightbulbIcon /> Solution
               </Typography>
-              <ul>
-                <li>해당 문제를 해결할 기술</li>
-                <li>보다 구체적인 구현 방법</li>
-              </ul>
+              <Box component="ul" sx={{ pl: 2, m: 0 }}>
+                <Typography component="li" sx={styles.listItem}>
+                  아이디어의 핵심 요소(기능, 특징)
+                </Typography>
+                <Typography component="li" sx={styles.listItem}>
+                  문제를 해결하기 위한 방법이나 접근 방식(기술, 프로세스)
+                </Typography>
+                <Typography component="li" sx={styles.listItem}>
+                  최종 결과물(제품/서비스)의 형태
+                </Typography>
+              </Box>
               <TextField
                 multiline
                 minRows={3}
                 maxRows={10}
                 variant="outlined"
-                placeholder=""
+                placeholder="해결 방안을 구체적으로 작성해주세요"
                 sx={styles.textField}
                 value={solutionText}
                 onChange={handleSolutionChange}
               />
             </Box>
-          </Card>
 
-          <Box mt={3} sx={styles.buttonBox}>
-            <Button
-              variant="contained"
-              sx={{
-                ...styles.startButton,
-                backgroundColor: '#4e73df', // 더 밝은 파란색
-                '&:hover': {
-                  backgroundColor: '#3a5dd0', // 호버 시 색상
-                },
-              }}
-              disabled={isButtonDisabled}
-              onClick={handleStartAnalysis}
-              type="submit"
-            >
-              {isPending ? '요청 중...' : '분석 시작'}
-            </Button>
-          </Box>
-          <Box sx={styles.analysisContainer}>
-            <Card
-              sx={{
-                ...styles.analysisCard,
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                transition: 'transform 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            >
-              <Typography variant="h6" fontWeight="bold">
-                📊 SWOT Analysis
+            {/* 버튼 */}
+            <Box sx={styles.buttonContainer}>
+              <Button
+                variant="contained"
+                sx={styles.startButton}
+                disabled={isButtonDisabled}
+                onClick={handleStartAnalysis}
+                endIcon={<SendIcon />}
+              >
+                {isPending ? '요청 중...' : '분석 시작'}
+              </Button>
+            </Box>
+          </Paper>
+
+          {/* 분석 카드 세트 */}
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={3}
+            sx={styles.analysisContainer}
+          >
+            <Card sx={styles.analysisCard}>
+              <AssessmentIcon sx={styles.analysisIcon} />
+              <Typography variant="h6" sx={styles.analysisTitle}>
+                SWOT Analysis
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" sx={styles.analysisDesc}>
                 Comprehensive analysis of Strengths, Weaknesses, Opportunities,
                 and Threats
               </Typography>
             </Card>
 
-            <Card
-              sx={{
-                ...styles.analysisCard,
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                transition: 'transform 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            >
-              <Typography variant="h6" fontWeight="bold">
-                📈 Market Size
+            <Card sx={styles.analysisCard}>
+              <ShowChartIcon sx={styles.analysisIcon} />
+              <Typography variant="h6" sx={styles.analysisTitle}>
+                Market Size
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" sx={styles.analysisDesc}>
                 Detailed market analysis and potential
               </Typography>
             </Card>
 
-            <Card
-              sx={{
-                ...styles.analysisCard,
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                transition: 'transform 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
-                },
-              }}
-            >
-              <Typography variant="h6" fontWeight="bold">
-                🏢 Competitor Analysis
+            <Card sx={styles.analysisCard}>
+              <BusinessIcon sx={styles.analysisIcon} />
+              <Typography variant="h6" sx={styles.analysisTitle}>
+                Competitor Analysis
               </Typography>
-              <Typography variant="body2">
+              <Typography variant="body2" sx={styles.analysisDesc}>
                 Overview of similar services and competitive landscape
               </Typography>
             </Card>
-          </Box>
+          </Stack>
         </Box>
       )}
     </>
