@@ -19,6 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider options={{ key: 'css' }}>
+
           <QueryProvider>
             <Header />
             <main>{children}</main>
