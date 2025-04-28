@@ -1,6 +1,6 @@
 'use client'
 
-import AuthTerm from '@/conponents/login/authTerm'
+import AuthTerm from '@/pages/login/authTerm'
 
 export default function TermsPage() {
   return <AuthTerm />
