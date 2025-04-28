@@ -4,9 +4,9 @@ import * as React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Box, Tabs, Tab } from '@mui/material'
 import Link from 'next/link'
-import { styles } from '../shared/ui/navigationStyles'
+import { styles } from '@/shared/ui/input/navigationStyles'
 
-export default function NavigationTab() {
+export default function IdeaNav() {
   const router = useRouter()
   const pathname = usePathname() ?? '' // `null` 방지
 

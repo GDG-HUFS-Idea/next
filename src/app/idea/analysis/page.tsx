@@ -47,4 +47,5 @@ export default function AnalysisPage() {
       <TeamAndChallengers data={data?.team_requirements} />
     </Box>
   )
+
 }
