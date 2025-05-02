@@ -3,6 +3,7 @@ import React from 'react'
 import { AppBar, Toolbar, IconButton, Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { User, Settings } from 'lucide-react'
+
 import styles from '@/shared/ui/headerFooterStyles'
 
 const Header: React.FC = () => {

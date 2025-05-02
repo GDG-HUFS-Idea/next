@@ -1,10 +1,11 @@
 const styles = {
   header: {
     position: 'static',
-    color: 'inherit', // 기본 파란색 제거
+    color: 'inherit',
     elevation: 1,
-    backgroundColor: 'white', // 배경색을 흰색으로 설정
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', // 약간의 그림자 효과 추가
+    backgroundColor: 'white',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
   } as const,
 
   toolbar: {
