@@ -4,6 +4,7 @@ import React from 'react'
 import { Card, Button, Box, Container } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import styles from '@/shared/ui/login/loginPageStyles'
+import GoogleLogin from '@/components/login/googleLogin'
 
 const LoginPage: React.FC = () => {
   return (
@@ -26,17 +27,7 @@ const LoginPage: React.FC = () => {
             <Button fullWidth variant="contained" sx={styles.kakaoButton}>
               카카오 로그인
             </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              sx={styles.googleButton}
-              onClick={() => {
-                window.location.href =
-                  `${process.env.NEXT_PUBLIC_BASE_URL}` + '/auth/oauth/google'
-              }}
-            >
-              구글로 로그인
-            </Button>
+            <GoogleLogin />
           </Card>
         </Box>
       </Container>

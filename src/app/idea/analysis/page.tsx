@@ -1,20 +1,20 @@
 'use client'
 
 import React from 'react'
-import { Box, Typography, CircularProgress, Alert } from '@mui/material'
-import AnalysisResults from '@/pages/analysis/analysisResults'
-import MarketOverview from '@/pages/analysis/marketOverview'
-import SimilarServices from '@/pages/analysis/similarServices'
-import ExpectedBM from '@/pages/analysis/expectedBM'
-import Opportunities from '@/pages/analysis/opportunities'
-import TeamAndChallengers from '@/pages/analysis/teamAndChallenges'
-import MainTarget from '@/pages/analysis/mainTarget'
-import MarketingStrategy from '@/pages/analysis/marketingStrategy'
+import { Box } from '@mui/material'
+import AnalysisResults from '@/components/analysis/analysisResults'
+import MarketOverview from '@/components/analysis/marketOverview'
+import SimilarServices from '@/components/analysis/similarServices'
+import ExpectedBM from '@/components/analysis/expectedBM'
+import Opportunities from '@/components/analysis/opportunities'
+import TeamAndChallengers from '@/components/analysis/teamAndChallenges'
+import MainTarget from '@/components/analysis/mainTarget'
+import MarketingStrategy from '@/components/analysis/marketingStrategy'
 import { useGetIdeaOverview } from '@/shared/api/idea/getIdeaOverview'
 
 export default function AnalysisPage() {
   const projectId = 10
-  const { data, isError, error } = useGetIdeaOverview(projectId)
+  const { data } = useGetIdeaOverview(projectId)
   console.log('data', data)
 
   return (
@@ -47,5 +47,4 @@ export default function AnalysisPage() {
       <TeamAndChallengers data={data?.team_requirements} />
     </Box>
   )
-
 }
