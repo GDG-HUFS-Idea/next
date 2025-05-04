@@ -158,15 +158,20 @@ export const usePostIdeaInput = () => {
   })
 }
 
+interface IdeaStatusData {
+  is_complete?: boolean
+}
+
 // 분석 상태 조회를 위한 query 훅
 export const useIdeaStatus = (taskId: string | null, enabled = false) => {
   return useQuery<AnalysisStatusResponse, Error>({
     queryKey: ['ideaStatus', taskId],
     queryFn: () => fetchIdeaStatus(taskId!),
     enabled: !!taskId && enabled,
-    refetchInterval: (data) => {
+    refetchInterval: (query) => {
+      const data = query as IdeaStatusData | undefined
       // 이미 완료되었거나 오류가 있으면 폴링 중단
-      if (data?.is_complete) {
+      if (data?.is_complete || false) {
         return false // 완료되면 폴링 중단
       }
       return 500 // 0.5초마다 폴링

@@ -19,7 +19,10 @@ const postSignup = async ({
   agreements,
 }: {
   sessionId: string
-  agreements: any[]
+  agreements: {
+    term_id: number
+    has_agreed: boolean
+  }[]
 }) => {
   const data = {
     session_id: sessionId,
