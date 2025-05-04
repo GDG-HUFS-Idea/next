@@ -1,6 +1,7 @@
 'use client'
 
-import AuthCallback from '@/pages/login/authCallback'
+import React from 'react'
+import AuthCallback from '@/components/login/authCallback'
 
 export default function RedirectPage() {
   return <AuthCallback />
