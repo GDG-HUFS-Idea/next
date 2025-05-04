@@ -7,5 +7,5 @@ import Header from './header'
 export default function RootHeader() {
   const pathname = usePathname() ?? ''
 
-  return !pathname.startsWith('/idea') ? <Header open={false} /> : null
+  return !pathname.startsWith('/idea') ? <Header /> : null
 }
