@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { AppBar, Toolbar, IconButton, Box } from '@mui/material'
+import { AppBar, Toolbar, IconButton, Box, Button } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { User, Settings } from 'lucide-react'
 import styles from '@/shared/ui/headerFooterStyles'
@@ -12,16 +12,22 @@ const Header: React.FC = () => {
     <AppBar sx={styles.header}>
       <Toolbar sx={styles.toolbar}>
         {/* Logo or Title */}
-        <Typography variant="h6" component="div">
-          💡 SparkLens
-        </Typography>
-
+        <Button
+          color="inherit"
+          variant="text"
+          disableRipple
+          onClick={() => router.push('/idea/input')}
+        >
+          <Typography variant="h6" component="div">
+            💡 SparkLens
+          </Typography>
+        </Button>
         {/* Icons */}
         <Box>
-          <IconButton color="inherit" onClick={() => router.push('./login')}>
+          <IconButton color="inherit" onClick={() => router.push('/login')}>
             <User />
           </IconButton>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => router.push('/setting')}>
             <Settings />
           </IconButton>
         </Box>
