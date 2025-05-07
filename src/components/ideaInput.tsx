@@ -30,7 +30,7 @@ const IdeaInput: React.FC = () => {
   const [solutionText, setSolutionText] = useState('') // 솔루션 입력 상태
   const [isProcessing, setIsProcessing] = useState(false)
   const [taskId, setTaskId] = useState<string | null>(null)
-  const name = useAuthStore((state) => state?.user?.name)
+  const user = useAuthStore((state) => state?.user)
   const cookie = useGetCookie()?.data ?? null
 
   // Zustand 스토어의 setTaskId 함수 가져오기
@@ -85,7 +85,7 @@ const IdeaInput: React.FC = () => {
   return (
     <>
       {isProcessing && taskId ? (
-        <IdeaProcessing taskId={taskId} username={name} />
+        <IdeaProcessing taskId={taskId} username={user?.name} />
       ) : (
         <Box sx={styles.container}>
           {/* 메인 카드 */}
