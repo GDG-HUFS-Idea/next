@@ -53,7 +53,8 @@ export const styles = {
   },
   buttonContainer: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    alignItems: 'flex-end' /* 교차축(가로)에서 오른쪽 정렬 */,
+    flexDirection: 'column' /* 요소들을 세로로 배치 */,
     mt: 3,
   },
   startButton: {
