@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { useGetCookie } from '../cookie'
+import { useBaseUrl } from '../getBaseUrl'
 
 // Define the response types based on the API documentation
 export interface MarketTrendItem {
@@ -116,21 +118,22 @@ export interface IdeaOverviewResponse {
  * @param id - Project ID to fetch overview data for
  * @returns Query result with project analysis data
  */
+
 export const useGetIdeaOverview = (projectId: number | undefined) => {
+  const { data: token } = useGetCookie()
+  const { data: baseUrl } = useBaseUrl()
   return useQuery<IdeaOverviewResponse, Error>({
     enabled: !!projectId,
-    queryKey: ['projects', 'analyses', 'overview', projectId],
+    queryKey: ['projects', 'analyses', 'overview', projectId, baseUrl, token],
     queryFn: async () => {
       if (!projectId) {
         throw new Error('Project ID is required')
       }
 
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
       if (!baseUrl) {
         throw new Error('API base URL is not defined')
       }
 
-      const token = process.env.NEXT_PUBLIC_USER_JWT
       if (!token) {
         throw new Error('Authentication token is not available')
       }
