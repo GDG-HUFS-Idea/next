@@ -1,12 +1,22 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Card, Button, Box, Container } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import styles from '@/shared/ui/login/loginPageStyles'
 import GoogleLogin from '@/components/login/googleLogin'
+import { useGetCookie } from '@/shared/api/cookie'
+import { useRouter } from 'next/navigation'
 
 const LoginPage: React.FC = () => {
+  const router = useRouter()
+  const cookie = useGetCookie()?.data ?? null
+  useEffect(() => {
+    if (cookie) {
+      router.push('/idea/input')
+    }
+  }, [cookie, router])
+
   return (
     <Box sx={styles.pageContainer}>
       {/* Main Content */}

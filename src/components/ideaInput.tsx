@@ -11,6 +11,7 @@ import {
   TextField,
   Stack,
   Paper,
+  Link,
 } from '@mui/material'
 import { usePostIdeaInput, IdeaData } from '@/shared/api/idea/ideaInput'
 import { ideaStore } from '@/shared/store/ideaStore'
@@ -21,12 +22,16 @@ import AssessmentIcon from '@mui/icons-material/Assessment'
 import BusinessIcon from '@mui/icons-material/Business'
 import SendIcon from '@mui/icons-material/Send'
 import { styles } from '@/shared/ui/input/inputStyles'
+import { useGetCookie } from '@/shared/api/cookie'
+import { useAuthStore } from '@/shared/store/authStore'
 
 const IdeaInput: React.FC = () => {
   const [problemText, setProblemText] = useState('') // 문제 입력 상태
   const [solutionText, setSolutionText] = useState('') // 솔루션 입력 상태
   const [isProcessing, setIsProcessing] = useState(false)
   const [taskId, setTaskId] = useState<string | null>(null)
+  const name = useAuthStore((state) => state?.user?.name)
+  const cookie = useGetCookie()?.data ?? null
 
   // Zustand 스토어의 setTaskId 함수 가져오기
   const setStoreTaskId = ideaStore((store) => store.setTaskId)
@@ -70,17 +75,17 @@ const IdeaInput: React.FC = () => {
     }
   }
 
-  // 버튼 활성화 조건: 두 입력 필드 모두 값이 있고, 현재 mutation이 진행 중이 아닐 때
+  // 버튼 활성화 조건: 두 입력 필드 모두 값이 있고, 쿠키가 저장되어 있으며 현재 mutation이 진행 중이 아닐 때
   const isButtonDisabled =
-    !problemText.trim() || !solutionText.trim() || isPending
-
-  // 사용자 이름 (여기서는 예시로만 사용, 실제로는 인증 시스템에서 가져옴)
-  const username = '홍길동' // 실제 구현 시 사용자 정보에서 가져옴
+    !problemText.trim() ||
+    !solutionText.trim() ||
+    isPending ||
+    typeof cookie !== 'string'
 
   return (
     <>
       {isProcessing && taskId ? (
-        <IdeaProcessing taskId={taskId} username={username} />
+        <IdeaProcessing taskId={taskId} username={name} />
       ) : (
         <Box sx={styles.container}>
           {/* 메인 카드 */}
@@ -149,6 +154,11 @@ const IdeaInput: React.FC = () => {
               >
                 {isPending ? '요청 중...' : '분석 시작'}
               </Button>
+              {typeof cookie !== 'string' && (
+                <Link href="/login" underline="none">
+                  <Typography>로그인 하러 가기</Typography>
+                </Link>
+              )}
             </Box>
           </Paper>
 
