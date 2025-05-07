@@ -18,6 +18,8 @@ import {
 import { Settings, LogOut, HelpCircle, History } from 'lucide-react'
 // 프로젝트 API 커스텀 훅 사용
 import { useMyProjects } from '@/shared/api/idea/myIdea'
+import { AnalysisResult, ideaStore } from '@/shared/store/ideaStore'
+import { useRouter } from 'next/navigation'
 
 const HEADER_HEIGHT = 72 // Header 높이(px) - 실제 헤더 높이에 맞게 조정 필요
 
@@ -35,6 +37,10 @@ const Sidebar = ({
   const [open, setOpen] = useState(false)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
   const [sidebarTop, setSidebarTop] = useState(HEADER_HEIGHT)
+
+  const setProject = ideaStore((state) => state.setAnalysisResult)
+
+  const router = useRouter()
 
   // useMyProjects hook 사용 - 필수 쿼리 파라미터 offset, limit 설정
   const queryParams = {
@@ -73,7 +79,6 @@ const Sidebar = ({
       if (menu === 'history') {
         // history 메뉴 클릭 시 프로젝트 목록 가져오기
         refetch()
-        console.log('projects:', data?.projects)
       }
     }
   }
@@ -223,14 +228,20 @@ const Sidebar = ({
                       <ListItemText primary="로딩 중..." />
                     </ListItemButton>
                   ) : (
-                    data?.projects?.map((project) => (
+                    data?.projects?.map((project: AnalysisResult) => (
                       <Tooltip
                         key={project.id}
                         title={project.name}
                         placement="right"
                         arrow
                       >
-                        <ListItemButton sx={{ pl: 2 }}>
+                        <ListItemButton
+                          sx={{ pl: 2 }}
+                          onClick={() => {
+                            setProject({ id: project.id, name: project.name })
+                            router.push('/idea/analysis')
+                          }}
+                        >
                           <ListItemText
                             primary={
                               project.name.length > 8

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box } from '@mui/material'
 import AnalysisResults from '@/components/analysis/analysisResults'
 import MarketOverview from '@/components/analysis/marketOverview'
@@ -11,11 +11,21 @@ import TeamAndChallengers from '@/components/analysis/teamAndChallenges'
 import MainTarget from '@/components/analysis/mainTarget'
 import MarketingStrategy from '@/components/analysis/marketingStrategy'
 import { useGetIdeaOverview } from '@/shared/api/idea/getIdeaOverview'
+import { ideaStore } from '@/shared/store/ideaStore'
+import { useGetCookie } from '@/shared/api/cookie'
+import { useRouter } from 'next/navigation'
 
 export default function AnalysisPage() {
-  const projectId = 10
+  const projectId = ideaStore((state) => state.analysisResult?.id)
   const { data } = useGetIdeaOverview(projectId)
-  console.log('data', data)
+  const cookie = useGetCookie()?.data ?? null
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!cookie) {
+      router.push('/login')
+    }
+  }, [cookie, router])
 
   return (
     <Box

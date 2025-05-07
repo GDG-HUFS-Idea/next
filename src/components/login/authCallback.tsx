@@ -1,7 +1,8 @@
 import { useGetAuthCallback } from '@/shared/api/redirect/getAuthCallback'
 import { useAuthStore, useTermAuthStore } from '@/shared/store/authStore'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useSetCookie } from '@/shared/api/cookie'
 
 // Create a client component that uses useSearchParams
 function AuthCallbackClient() {
@@ -10,10 +11,14 @@ function AuthCallbackClient() {
   const termAccount = useTermAuthStore((state) => state.setAccount)
   const account = useAuthStore((store) => store.setUser)
 
-  const code = searchParams?.get('code') || '' // URL에서 code 가져오기
+  // URL에서 code 가져오기 - 컴포넌트 초기화 시 한 번만 실행되도록 상태로 저장
+  const [code] = useState(searchParams?.get('code') || '')
   const { data, isLoading } = useGetAuthCallback(code)
 
+  const cookie = useSetCookie()
+
   useEffect(() => {
+    // data가 없으면 early return
     if (!data) return
 
     if (!data.has_account) {
@@ -21,9 +26,26 @@ function AuthCallbackClient() {
       router.push('/terms')
     } else {
       account(data)
-      router.push('/idea/input')
+
+      // 쿠키 저장 작업
+      const req = data.token
+      cookie.mutate(
+        { req },
+        {
+          onSuccess: () => {
+            console.log('쿠키 저장 성공')
+            // 성공 후 라우팅은 onSuccess 콜백에서 처리
+            router.push('/idea/input')
+          },
+          onError: (error) => {
+            console.log(error)
+            return error
+          },
+        }
+      )
+      // router.push를 여기서 제거하고 onSuccess로 이동
     }
-  }, [data, router, account, termAccount])
+  }, [data]) // 의존성 배열 간소화
 
   if (isLoading) return <p>로딩 중...</p>
 
