@@ -1,13 +1,12 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
+import { useBaseUrl } from '@/shared/api/getBaseUrl'
 
 // 특정 약관 ID들만 요청하는 GET API
-const fetchTermsByIds = async (ids: number[]) => {
+const fetchTermsByIds = async (ids: number[], baseUrl: string) => {
   if (!ids.length) return { terms: [] } // ID가 없으면 빈 배열 반환
 
   const queryString = ids.map((id) => `ids=${id}`).join('&') // URL 파라미터 변환
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/terms?${queryString}`
-  )
+  const res = await fetch(`${baseUrl}/terms?${queryString}`)
 
   if (!res.ok) throw new Error('이용약관 데이터를 불러올 수 없습니다.')
   return res.json()
@@ -17,28 +16,27 @@ const fetchTermsByIds = async (ids: number[]) => {
 const postSignup = async ({
   sessionId,
   agreements,
+  baseUrl,
 }: {
   sessionId: string
   agreements: {
     term_id: number
     has_agreed: boolean
   }[]
+  baseUrl: string
 }) => {
   const data = {
     session_id: sessionId,
     user_agreements: agreements,
   }
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/auth/oauth/signup`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(data),
-    }
-  )
+  const res = await fetch(`${baseUrl}/auth/oauth/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
 
   if (!res.ok) {
     console.log(res)
@@ -48,14 +46,24 @@ const postSignup = async ({
 }
 
 // React Query hooks
-export const useTermsQuery = (ids: number[]) =>
-  useQuery({
-    queryKey: ['terms', ids],
-    queryFn: () => fetchTermsByIds(ids),
+export const useTermsQuery = (ids: number[]) => {
+  const { data: baseUrl } = useBaseUrl()
+  return useQuery({
+    queryKey: ['terms', ids, baseUrl],
+    queryFn: () => fetchTermsByIds(ids, baseUrl),
     enabled: ids.length > 0, // ID 목록이 비어있을 경우 요청하지 않음
   })
+}
 
-export const useSignupMutation = () =>
-  useMutation({
-    mutationFn: postSignup,
+export const useSignupMutation = () => {
+  const { data: baseUrl } = useBaseUrl()
+  return useMutation({
+    mutationFn: (variables: {
+      sessionId: string
+      agreements: {
+        term_id: number
+        has_agreed: boolean
+      }[]
+    }) => postSignup({ ...variables, baseUrl }),
   })
+}
