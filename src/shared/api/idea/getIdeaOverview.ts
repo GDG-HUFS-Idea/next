@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useGetCookie } from '../cookie'
-import { useBaseUrl } from '../getBaseUrl'
 
 // Define the response types based on the API documentation
 export interface MarketTrendItem {
@@ -121,17 +120,12 @@ export interface IdeaOverviewResponse {
 
 export const useGetIdeaOverview = (projectId: number | undefined) => {
   const { data: token } = useGetCookie()
-  const { data: baseUrl } = useBaseUrl()
   return useQuery<IdeaOverviewResponse, Error>({
     enabled: !!projectId,
-    queryKey: ['projects', 'analyses', 'overview', projectId, baseUrl, token],
+    queryKey: ['projects', 'analyses', 'overview', projectId, token],
     queryFn: async () => {
       if (!projectId) {
         throw new Error('Project ID is required')
-      }
-
-      if (!baseUrl) {
-        throw new Error('API base URL is not defined')
       }
 
       if (!token) {
@@ -140,7 +134,7 @@ export const useGetIdeaOverview = (projectId: number | undefined) => {
 
       try {
         const response = await fetch(
-          `${baseUrl}/projects/analyses/overview?id=${projectId}`,
+          `http://suehyun.kro.kr/projects/analyses/overview?id=${projectId}`,
           {
             method: 'GET',
             headers: {

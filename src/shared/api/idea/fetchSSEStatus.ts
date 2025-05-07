@@ -4,16 +4,17 @@ import type { AnalysisStatusResponse } from '@/shared/api/idea/ideaInput'
 
 export async function fetchSSEStatus({
   taskId,
-  baseUrl,
   token,
   onProgress,
 }: {
   taskId: string
-  baseUrl: string
   token: string
   onProgress?: (status: AnalysisStatusResponse) => void // ✅ 수정
 }): Promise<AnalysisStatusResponse> {
-  const url = new URL('/projects/analyses/overview/status', baseUrl)
+  const url = new URL(
+    '/projects/analyses/overview/status',
+    'http://suehyun.kro.kr'
+  )
   url.searchParams.set('task_id', taskId)
 
   const response = await fetch(url.toString(), {

@@ -31,6 +31,7 @@ export const useSetCookie = () =>
         body: JSON.stringify({ token: req }),
       })
       if (!response.ok) {
+        console.log(response, req)
         throw new Error('Failed to set cookie')
       }
       return response.json()
