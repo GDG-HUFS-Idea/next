@@ -11,9 +11,10 @@ import {
   Box,
 } from '@mui/material'
 import { useTermsStore } from '@/shared/store/useTermsStore'
-import { useTermAuthStore } from '@/shared/store/authStore'
+import { useAuthStore, useTermAuthStore } from '@/shared/store/authStore'
 import { useTermsQuery, useSignupMutation } from '@/shared/api/getTerms'
 import { styles } from '@/shared/ui/login/authTermStytle'
+import { useSetCookie } from '@/shared/api/cookie'
 
 interface Term {
   id: number
@@ -31,7 +32,11 @@ export default function AuthTerm() {
   const { data, isLoading } = useTermsQuery(ids)
   const signupMutation = useSignupMutation()
 
+  const { mutate: cookieMutate } = useSetCookie()
+
   const { agreements, setAgreement } = useTermsStore()
+
+  const setUser = useAuthStore((state) => state.setUser)
 
   // 필수 약관이 전부 체크되었는지 확인
   const isAllRequiredChecked = data?.terms
@@ -50,10 +55,16 @@ export default function AuthTerm() {
       term_id: term.id,
       has_agreed: agreements[term.id] || false,
     }))
+
     signupMutation.mutate(
       { sessionId: session_id, agreements: user_agreements },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
+          setUser(res)
+          cookieMutate(
+            { req: res.token },
+            { onSuccess: () => console.log('쿠키 저장 성공') }
+          )
           router.push('/idea/input') // ✅ 이제 useRouter()를 안전하게 사용 가능
         },
         onError: (error) => {
