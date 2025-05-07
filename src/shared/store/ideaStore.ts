@@ -2,11 +2,10 @@
 import { create } from 'zustand'
 
 // 분석 결과 타입 정의
-interface AnalysisResult {
-  project?: {
-    id: number
-    name: string
-  }
+export interface AnalysisResult {
+  id: number
+  name: string
+
   // 여기에 필요한 다른 결과 필드 추가
 }
 
@@ -57,6 +56,3 @@ export const ideaStore = create<IdeaStoreState>((set) => ({
       isAnalysisComplete: false,
     }),
 }))
-
-// 기존 taskIdStore는 이제 필요 없으므로 ideaStore로 대체 가능
-export const taskIdStore = ideaStore
