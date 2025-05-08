@@ -4,6 +4,7 @@ import Header from '@/widgets/header/header'
 import Footer from '@/widgets/footer/footer'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import ClientProvider from '@/app/clientProvider'
+import { PublicEnvScript } from 'next-runtime-env'
 
 export const metadata: Metadata = {
   title: 'SparkLens',
@@ -17,6 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <PublicEnvScript />
+      </head>
       <body>
         <AppRouterCacheProvider options={{ key: 'css' }}>
           <ClientProvider>
