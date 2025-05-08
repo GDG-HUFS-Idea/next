@@ -2,6 +2,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useGetCookie } from '@/shared/api/cookie'
 import { fetchSSEStatus } from '@/shared/api/idea/fetchSSEStatus'
+import { env } from 'next-runtime-env'
 // 타입 정의
 export interface AnalysisStatusResponse {
   is_complete: boolean
@@ -29,19 +30,17 @@ export const postIdeaInput = async (
   data: IdeaData,
   token: string
 ): Promise<TaskResponse> => {
+  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
   try {
-    const res = await fetch(
-      `http://suehyun.kro.kr/projects/analyses/overview`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      }
-    )
+    const res = await fetch(`${apiBaseUrl}/projects/analyses/overview`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    })
 
     if (!res.ok) {
       throw new Error(`아이디어 등록 실패: ${res.status}`)
@@ -56,12 +55,12 @@ export const postIdeaInput = async (
 
 export const fetchIdeaStatus = async (
   taskId: string,
-  token: string,
-  baseUrl: string
+  token: string
 ): Promise<AnalysisStatusResponse> => {
+  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
   try {
     const res = await fetch(
-      `${baseUrl}/projects/analyses/overview/status?task_id=${taskId}`,
+      `${apiBaseUrl}/projects/analyses/overview/status?task_id=${taskId}`,
       {
         method: 'GET',
         headers: {

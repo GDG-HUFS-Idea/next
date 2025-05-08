@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useGetCookie } from '../cookie'
+import { env } from 'next-runtime-env'
 
 // Define the response types based on the API documentation
 export interface MarketTrendItem {
@@ -119,10 +120,18 @@ export interface IdeaOverviewResponse {
  */
 
 export const useGetIdeaOverview = (projectId: number | undefined) => {
+  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
   const { data: token } = useGetCookie()
   return useQuery<IdeaOverviewResponse, Error>({
     enabled: !!projectId,
-    queryKey: ['projects', 'analyses', 'overview', projectId, token],
+    queryKey: [
+      'projects',
+      'analyses',
+      'overview',
+      projectId,
+      token,
+      apiBaseUrl,
+    ],
     queryFn: async () => {
       if (!projectId) {
         throw new Error('Project ID is required')
@@ -134,7 +143,7 @@ export const useGetIdeaOverview = (projectId: number | undefined) => {
 
       try {
         const response = await fetch(
-          `http://suehyun.kro.kr/projects/analyses/overview?id=${projectId}`,
+          `${apiBaseUrl}/projects/analyses/overview?id=${projectId}`,
           {
             method: 'GET',
             headers: {
