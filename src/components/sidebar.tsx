@@ -11,7 +11,6 @@ import {
   Typography,
   ListItemButton,
   Box,
-  Avatar,
   Collapse,
   Tooltip,
 } from '@mui/material'
@@ -28,9 +27,7 @@ const Sidebar = ({
   children,
 }: {
   user: {
-    name: string
-    role: string
-    avatar: string
+    permissions: string[]
   }
   children: React.ReactNode
 }) => {
@@ -117,13 +114,9 @@ const Sidebar = ({
             width: '100%',
           }}
         >
-          <Avatar sx={{ width: 40, height: 40 }} src={user.avatar} />
           {open && (
             <Box sx={{ marginLeft: 2, marginTop: -1 }}>
-              <Typography variant="caption" color="textSecondary">
-                {user.role === 'admin' ? 'ADMINISTRATOR' : 'PRODUCT MANAGER'}
-              </Typography>
-              <Typography>{user.name}</Typography>
+              <Typography>{user.permissions[0]}</Typography>
             </Box>
           )}
         </Box>

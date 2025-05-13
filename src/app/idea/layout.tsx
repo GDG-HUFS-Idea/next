@@ -9,14 +9,9 @@ export default function IdeaLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const user = {
-    name: 'Andrew Smith',
-    role: 'admin', // 'user' or 'admin'
-    avatar: '/avatar.png',
-  }
   return (
     <main>
-      <ClientSidebar user={user}>
+      <ClientSidebar>
         <NavigationTab />
 
         <Card sx={styles.ideaWrapper}>{children}</Card>
