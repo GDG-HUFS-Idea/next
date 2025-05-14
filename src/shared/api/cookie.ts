@@ -23,6 +23,7 @@ export const useSetCookie = () =>
   useMutation({
     mutationFn: async (variables: { req: string }) => {
       const { req } = variables
+
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
@@ -33,6 +34,19 @@ export const useSetCookie = () =>
       if (!response.ok) {
         console.log(response, req)
         throw new Error('Failed to set cookie')
+      }
+      return response.json()
+    },
+  })
+
+export const useDeleteCookie = () =>
+  useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/login', {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to delete cookie')
       }
       return response.json()
     },
