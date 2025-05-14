@@ -25,7 +25,7 @@ function AuthCallbackClient() {
       termAccount(data)
       router.push('/terms')
     } else {
-      account(data)
+      account(data.user)
 
       // 쿠키 저장 작업
       const req = data.token
