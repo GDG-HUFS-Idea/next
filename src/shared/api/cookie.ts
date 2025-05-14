@@ -37,3 +37,16 @@ export const useSetCookie = () =>
       return response.json()
     },
   })
+
+export const useDeleteCookie = () =>
+  useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/login', {
+        method: 'DELETE',
+      })
+      if (!response.ok) {
+        throw new Error('Failed to delete cookie')
+      }
+      return response.json()
+    },
+  })

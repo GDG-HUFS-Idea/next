@@ -60,7 +60,7 @@ export default function AuthTerm() {
       { sessionId: session_id, agreements: user_agreements },
       {
         onSuccess: (res) => {
-          setUser(res)
+          setUser(res.user)
           cookieMutate(
             { req: res.token },
             { onSuccess: () => console.log('쿠키 저장 성공') }

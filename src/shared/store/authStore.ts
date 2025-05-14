@@ -2,12 +2,8 @@ import { create } from 'zustand'
 
 // ✅ 사용자 상태 인터페이스 정의
 interface AuthState {
-  user: { token: string; name: string; permissions: string[] } | null
-  setUser: (user: {
-    token: string
-    name: string
-    permissions: string[]
-  }) => void
+  user: { id: number; name: string; permissions: string[] } | null
+  setUser: (user: { id: number; name: string; permissions: string[] }) => void
   logout: () => void
 }
 
