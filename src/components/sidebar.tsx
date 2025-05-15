@@ -14,11 +14,12 @@ import {
   Collapse,
   Tooltip,
 } from '@mui/material'
-import { Settings, LogOut, HelpCircle, History } from 'lucide-react'
+import { Settings, LogOut, HelpCircle, History, User } from 'lucide-react'
 // 프로젝트 API 커스텀 훅 사용
 import { useMyProjects } from '@/shared/api/idea/myIdea'
 import { AnalysisResult, ideaStore } from '@/shared/store/ideaStore'
 import { useRouter } from 'next/navigation'
+import { useDeleteCookie } from '@/shared/api/cookie'
 
 const HEADER_HEIGHT = 72 // Header 높이(px) - 실제 헤더 높이에 맞게 조정 필요
 
@@ -27,6 +28,8 @@ const Sidebar = ({
   children,
 }: {
   user: {
+    id: number
+    name: string
     permissions: string[]
   }
   children: React.ReactNode
@@ -38,6 +41,13 @@ const Sidebar = ({
   const setProject = ideaStore((state) => state.setAnalysisResult)
 
   const router = useRouter()
+
+  const deleteMutation = useDeleteCookie()
+  useEffect(() => {
+    if (deleteMutation.isSuccess) {
+      window.location.reload()
+    }
+  }, [deleteMutation.isSuccess])
 
   // useMyProjects hook 사용 - 필수 쿼리 파라미터 offset, limit 설정
   const queryParams = {
@@ -114,9 +124,23 @@ const Sidebar = ({
             width: '100%',
           }}
         >
+          <User></User>
           {open && (
             <Box sx={{ marginLeft: 2, marginTop: -1 }}>
-              <Typography>{user.permissions[0]}</Typography>
+              <Typography
+                sx={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: 150,
+                  minWidth: 150,
+                }}
+              >
+                {user.name}
+              </Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                {user.permissions[0]}
+              </Typography>
             </Box>
           )}
         </Box>
@@ -288,7 +312,12 @@ const Sidebar = ({
         {/* 로그아웃 버튼 - 하단에 고정 */}
         <Box sx={{ marginTop: 'auto', width: '100%' }}>
           <ListItem disablePadding>
-            <ListItemButton sx={{ display: 'flex', alignItems: 'center' }}>
+            <ListItemButton
+              sx={{ display: 'flex', alignItems: 'center' }}
+              onClick={() => {
+                deleteMutation.mutate()
+              }}
+            >
               <ListItemIcon sx={{ minWidth: 'auto' }}>
                 <Tooltip
                   title="Logout"
