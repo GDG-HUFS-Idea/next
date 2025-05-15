@@ -1,9 +1,11 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { env } from 'next-runtime-env'
 
 // 특정 약관 ID들만 요청하는 GET API
 const fetchTermsByIds = async (ids: number[]) => {
-  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
+  const apiBaseUrl =
+    typeof window !== 'undefined'
+      ? window.__ENV__?.NEXT_PUBLIC_API_BASE_URL
+      : process.env.NEXT_PUBLIC_API_BASE_URL
   if (!ids.length) return { terms: [] } // ID가 없으면 빈 배열 반환
 
   const queryString = ids.map((id) => `ids=${id}`).join('&') // URL 파라미터 변환
@@ -24,7 +26,10 @@ const postSignup = async ({
     has_agreed: boolean
   }[]
 }) => {
-  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
+  const apiBaseUrl =
+    typeof window !== 'undefined'
+      ? window.__ENV__?.NEXT_PUBLIC_API_BASE_URL
+      : process.env.NEXT_PUBLIC_API_BASE_URL
   const data = {
     session_id: sessionId,
     user_agreements: agreements,
