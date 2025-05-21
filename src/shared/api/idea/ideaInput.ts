@@ -2,6 +2,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useGetCookie } from '@/shared/api/cookie'
 import { fetchSSEStatus } from '@/shared/api/idea/fetchSSEStatus'
+import { env } from 'next-runtime-env'
 // 타입 정의
 export interface AnalysisStatusResponse {
   is_complete: boolean
@@ -29,7 +30,7 @@ export const postIdeaInput = async (
   data: IdeaData,
   token: string
 ): Promise<TaskResponse> => {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
   try {
     const res = await fetch(`${apiBaseUrl}/projects/analyses/overview`, {
       method: 'POST',
@@ -56,7 +57,7 @@ export const fetchIdeaStatus = async (
   taskId: string,
   token: string
 ): Promise<AnalysisStatusResponse> => {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
+  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
   try {
     const res = await fetch(
       `${apiBaseUrl}/projects/analyses/overview/status?task_id=${taskId}`,

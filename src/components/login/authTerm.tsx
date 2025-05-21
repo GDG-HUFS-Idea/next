@@ -1,11 +1,20 @@
 import { useRouter } from 'next/navigation'
-import { Container, Typography, CircularProgress, Box } from '@mui/material'
-import { useTermAuthStore } from '@/shared/store/authStore'
-import { useAuthStore } from '@/shared/store/authStore'
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Checkbox,
+  Button,
+  CircularProgress,
+  Box,
+} from '@mui/material'
+import { useTermsStore } from '@/shared/store/useTermsStore'
+import { useAuthStore, useTermAuthStore } from '@/shared/store/authStore'
 import { useTermsQuery, useSignupMutation } from '@/shared/api/getTerms'
 import { styles } from '@/shared/ui/login/authTermStytle'
 import { useSetCookie } from '@/shared/api/cookie'
-import React from 'react'
 
 interface Term {
   id: number
@@ -25,18 +34,27 @@ export default function AuthTerm() {
 
   const { mutate: cookieMutate } = useSetCookie()
 
+  const { agreements, setAgreement } = useTermsStore()
+
   const setUser = useAuthStore((state) => state.setUser)
 
-  // 회원가입 API 호출 - 모든 약관에 자동 동의
-  const handleSubmit = () => {
-    const session_id = account?.session_id ?? ''
+  // 필수 약관이 전부 체크되었는지 확인
+  const isAllRequiredChecked = data?.terms
+    ?.filter((term: Term) => term.is_required)
+    .every((term: Term) => agreements[term.id])
 
-    // 모든 약관에 대해 동의 처리
-    const user_agreements =
-      data?.terms.map((term: Term) => ({
-        term_id: term.id,
-        has_agreed: true, // 모든 약관에 자동으로 동의 설정
-      })) || []
+  // 회원가입 API 호출
+  const handleSubmit = () => {
+    if (!isAllRequiredChecked) {
+      alert('필수 약관에 모두 동의해야 합니다.')
+      return
+    }
+
+    const session_id = account?.session_id ?? ''
+    const user_agreements = data.terms.map((term: Term) => ({
+      term_id: term.id,
+      has_agreed: agreements[term.id] || false,
+    }))
 
     signupMutation.mutate(
       { sessionId: session_id, agreements: user_agreements },
@@ -47,7 +65,7 @@ export default function AuthTerm() {
             { req: res.token },
             { onSuccess: () => console.log('쿠키 저장 성공') }
           )
-          router.push('/idea/input')
+          router.push('/idea/input') // ✅ 이제 useRouter()를 안전하게 사용 가능
         },
         onError: (error) => {
           console.error('회원가입 요청 실패:', error)
@@ -57,25 +75,62 @@ export default function AuthTerm() {
     )
   }
 
-  // 데이터가 로드되면 자동으로 회원가입 요청
-  React.useEffect(() => {
-    if (data && !isLoading) {
-      handleSubmit()
-    }
-  }, [data, isLoading])
-
   return (
     <Container maxWidth="md" sx={styles.container}>
       <Typography variant="h4" gutterBottom>
-        약관 동의 처리 중...
+        이용약관 동의
       </Typography>
 
-      <Box sx={styles.loadingBox}>
-        <CircularProgress />
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          약관 동의 및 회원가입을 자동으로 처리하고 있습니다.
-        </Typography>
-      </Box>
+      {isLoading ? (
+        <Box sx={styles.loadingBox}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box>
+          {data?.terms.map((term: Term) => (
+            <Card key={term.id} sx={styles.card}>
+              <CardContent>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={agreements[term.id] || false}
+                      onChange={() =>
+                        setAgreement(term.id, !agreements[term.id])
+                      }
+                    />
+                  }
+                  label={
+                    <Typography variant="body1">
+                      {term.title}
+                      {term.is_required && (
+                        <span style={{ color: 'red' }}> *</span>
+                      )}
+                    </Typography>
+                  }
+                />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={styles.termText}
+                >
+                  {term.content}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* 가입하기 버튼 */}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            sx={styles.submitButton}
+            disabled={signupMutation.isPending}
+          >
+            {signupMutation.isPending ? '처리 중...' : '가입하기'}
+          </Button>
+        </Box>
+      )}
     </Container>
   )
 }

@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
     response.cookies.set({
       name: 'user_jwt',
       value: token,
+      httpOnly: true,
       maxAge: 60 * 60 * 24 * 7, // 1주일
       path: '/',
       sameSite: 'strict',
