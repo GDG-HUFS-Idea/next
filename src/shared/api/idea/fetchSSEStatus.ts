@@ -1,7 +1,6 @@
 // utils/fetchSSEStatus.ts
 
 import type { AnalysisStatusResponse } from '@/shared/api/idea/ideaInput'
-import { env } from 'next-runtime-env'
 
 export async function fetchSSEStatus({
   taskId,
@@ -12,7 +11,7 @@ export async function fetchSSEStatus({
   token: string
   onProgress?: (status: AnalysisStatusResponse) => void // ✅ 수정
 }): Promise<AnalysisStatusResponse> {
-  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
   const url = new URL('/projects/analyses/overview/status', `${apiBaseUrl}`)
   url.searchParams.set('task_id', taskId)
 
