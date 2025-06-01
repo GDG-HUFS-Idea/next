@@ -1,5 +1,14 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 
+interface ReqType {
+  token: string
+  user: {
+    id: number
+    name: string
+    permissions: string[]
+  }
+}
+
 // TanStack Query를 사용하여 쿼리 생성
 export const useGetCookie = () => {
   return useQuery({
@@ -10,7 +19,7 @@ export const useGetCookie = () => {
         return null
       }
       const data = await response.json()
-      return data.jwt
+      return data
     },
     staleTime: Infinity, // baseURL은 세션 동안 변경되지 않으므로 staleTime을 Infinity로 설정
     retry: 3, // 실패 시 3번 재시도
@@ -21,14 +30,14 @@ export const useGetCookie = () => {
 // TanStack Query를 사용하여 쿼리 생성
 export const useSetCookie = () =>
   useMutation({
-    mutationFn: async (variables: { req: string }) => {
+    mutationFn: async (variables: { req: ReqType }) => {
       const { req } = variables
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token: req }),
+        body: JSON.stringify({ req: req }),
       })
       if (!response.ok) {
         console.log(response, req)
