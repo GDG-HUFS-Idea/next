@@ -11,7 +11,7 @@ import {
   Box,
 } from '@mui/material'
 import { useTermsStore } from '@/shared/store/useTermsStore'
-import { useAuthStore, useTermAuthStore } from '@/shared/store/authStore'
+import { useTermAuthStore } from '@/shared/store/authStore'
 import { useTermsQuery, useSignupMutation } from '@/shared/api/getTerms'
 import { styles } from '@/shared/ui/login/authTermStytle'
 import { useSetCookie } from '@/shared/api/cookie'
@@ -36,8 +36,6 @@ export default function AuthTerm() {
 
   const { agreements, setAgreement } = useTermsStore()
 
-  const setUser = useAuthStore((state) => state.setUser)
-
   // 필수 약관이 전부 체크되었는지 확인
   const isAllRequiredChecked = data?.terms
     ?.filter((term: Term) => term.is_required)
@@ -60,9 +58,8 @@ export default function AuthTerm() {
       { sessionId: session_id, agreements: user_agreements },
       {
         onSuccess: (res) => {
-          setUser(res.user)
           cookieMutate(
-            { req: res.token },
+            { req: { token: res.token, user: res.user } },
             { onSuccess: () => console.log('쿠키 저장 성공') }
           )
           router.push('/idea/input') // ✅ 이제 useRouter()를 안전하게 사용 가능

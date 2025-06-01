@@ -23,15 +23,15 @@ import BusinessIcon from '@mui/icons-material/Business'
 import SendIcon from '@mui/icons-material/Send'
 import { styles } from '@/shared/ui/input/inputStyles'
 import { useGetCookie } from '@/shared/api/cookie'
-import { useAuthStore } from '@/shared/store/authStore'
 
 const IdeaInput: React.FC = () => {
   const [problemText, setProblemText] = useState('') // 문제 입력 상태
   const [solutionText, setSolutionText] = useState('') // 솔루션 입력 상태
   const [isProcessing, setIsProcessing] = useState(false)
   const [taskId, setTaskId] = useState<string | null>(null)
-  const user = useAuthStore((state) => state?.user)
-  const cookie = useGetCookie()?.data ?? null
+  const { data } = useGetCookie() ?? null
+  const jwt = data?.jwt ?? null
+  const user = data?.user ?? null
 
   // Zustand 스토어의 setTaskId 함수 가져오기
   const setStoreTaskId = ideaStore((store) => store.setTaskId)
@@ -80,7 +80,7 @@ const IdeaInput: React.FC = () => {
     !problemText.trim() ||
     !solutionText.trim() ||
     isPending ||
-    typeof cookie !== 'string'
+    typeof jwt !== 'string'
 
   return (
     <>
@@ -154,8 +154,8 @@ const IdeaInput: React.FC = () => {
               >
                 {isPending ? '요청 중...' : '분석 시작'}
               </Button>
-              {typeof cookie !== 'string' && (
-                <Link href="/login" underline="none">
+              {typeof jwt !== 'string' && (
+                <Link href="/login" underline="none" sx={{ mt: 2, mr: 1 }}>
                   <Typography>로그인 하러 가기</Typography>
                 </Link>
               )}

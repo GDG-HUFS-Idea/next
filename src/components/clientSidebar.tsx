@@ -1,7 +1,7 @@
 'use client'
 
 import Sidebar from './sidebar'
-import { useAuthStore } from '@/shared/store/authStore'
+import { useGetCookie } from '@/shared/api/cookie'
 
 const ClientSidebar = ({ children }) => {
   const defaultUser = {
@@ -10,8 +10,8 @@ const ClientSidebar = ({ children }) => {
     permissions: ['로그인이 필요합니다'],
   }
   // Get user from auth store
-  const user = useAuthStore((state) => state?.user || defaultUser)
-
+  const data = useGetCookie()?.data
+  const user = data?.user ?? defaultUser
   // Create a default user object to use when user is null
 
   // Pass user if it exists, otherwise pass the default user
