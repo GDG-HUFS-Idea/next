@@ -10,7 +10,7 @@ export default function GoogleLogin() {
       variant="outlined"
       sx={styles.googleButton}
       onClick={() => {
-        window.location.href = 'http://suehyun.kro.kr/auth/oauth/google'
+        window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/oauth/google`
       }}
     >
       구글로 로그인

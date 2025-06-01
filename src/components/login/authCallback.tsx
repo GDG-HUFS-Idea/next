@@ -1,15 +1,23 @@
 import { useGetAuthCallback } from '@/shared/api/redirect/getAuthCallback'
-import { useAuthStore, useTermAuthStore } from '@/shared/store/authStore'
+import { useTermAuthStore } from '@/shared/store/authStore'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 import { useSetCookie } from '@/shared/api/cookie'
+
+interface ReqType {
+  token: string
+  user: {
+    id: number
+    name: string
+    permissions: string[]
+  }
+}
 
 // Create a client component that uses useSearchParams
 function AuthCallbackClient() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const termAccount = useTermAuthStore((state) => state.setAccount)
-  const account = useAuthStore((store) => store.setUser)
 
   // URL에서 code 가져오기 - 컴포넌트 초기화 시 한 번만 실행되도록 상태로 저장
   const [code] = useState(searchParams?.get('code') || '')
@@ -25,10 +33,8 @@ function AuthCallbackClient() {
       termAccount(data)
       router.push('/terms')
     } else {
-      account(data.user)
-
       // 쿠키 저장 작업
-      const req = data.token
+      const req: ReqType = { token: data.token, user: data.user }
       cookie.mutate(
         { req },
         {

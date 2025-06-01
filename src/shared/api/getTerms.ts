@@ -1,13 +1,13 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
-import { env } from 'next-runtime-env'
 
 // 특정 약관 ID들만 요청하는 GET API
 const fetchTermsByIds = async (ids: number[]) => {
-  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
   if (!ids.length) return { terms: [] } // ID가 없으면 빈 배열 반환
 
   const queryString = ids.map((id) => `ids=${id}`).join('&') // URL 파라미터 변환
-  const res = await fetch(`${apiBaseUrl}/terms?${queryString}`)
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/terms?${queryString}`
+  )
 
   if (!res.ok) throw new Error('이용약관 데이터를 불러올 수 없습니다.')
   return res.json()
@@ -24,19 +24,21 @@ const postSignup = async ({
     has_agreed: boolean
   }[]
 }) => {
-  const apiBaseUrl = env('NEXT_PUBLIC_API_BASE_URL')
   const data = {
     session_id: sessionId,
     user_agreements: agreements,
   }
-  const res = await fetch(`${apiBaseUrl}/auth/oauth/signup`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json',
-    },
-    body: JSON.stringify(data),
-  })
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/oauth/signup`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(data),
+    }
+  )
 
   if (!res.ok) {
     console.log(res)

@@ -11,11 +11,12 @@ import { useRouter } from 'next/navigation'
 const LoginPage: React.FC = () => {
   const router = useRouter()
   const cookie = useGetCookie()?.data ?? null
+  const jwt = cookie?.jwt ?? null
   useEffect(() => {
-    if (cookie) {
+    if (jwt) {
       router.push('/idea/input')
     }
-  }, [cookie, router])
+  }, [jwt, router])
 
   return (
     <Box sx={styles.pageContainer}>
