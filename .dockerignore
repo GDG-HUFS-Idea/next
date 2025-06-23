@@ -24,6 +24,10 @@ coverage
 
 # 💻 운영체제/에디터 관련 파일
 .DS_Store
+.env.local
+.env.development
+.env.test
+.env.production
 .vscode
 .idea
 

@@ -20,6 +20,9 @@ RUN pnpm build
 
 FROM node:18-alpine AS runner
 
+
+ENV NODE_ENV=production
+
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
