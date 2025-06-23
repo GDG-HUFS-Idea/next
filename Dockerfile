@@ -4,8 +4,6 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-<<<<<<< Updated upstream
-=======
 # Build arguments for build-time variables
 ARG NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_USER_JWT
@@ -14,7 +12,6 @@ ARG NEXT_PUBLIC_USER_JWT
 ENV NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
 ENV NEXT_PUBLIC_USER_JWT=${NEXT_PUBLIC_USER_JWT}
 
->>>>>>> Stashed changes
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
@@ -23,11 +20,9 @@ RUN pnpm build
 
 FROM node:18-alpine AS runner
 
-<<<<<<< Updated upstream
+
 ENV NODE_ENV=production
 
-=======
->>>>>>> Stashed changes
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
