@@ -1,7 +1,17 @@
 import { useRouter } from 'next/navigation'
-import { Container, Typography, CircularProgress, Box } from '@mui/material'
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Checkbox,
+  Button,
+  CircularProgress,
+  Box,
+} from '@mui/material'
+import { useTermsStore } from '@/shared/store/useTermsStore'
 import { useTermAuthStore } from '@/shared/store/authStore'
-import { useAuthStore } from '@/shared/store/authStore'
 import { useTermsQuery, useSignupMutation } from '@/shared/api/getTerms'
 import { styles } from '@/shared/ui/login/authTermStytle'
 import { useSetCookie } from '@/shared/api/cookie'
@@ -25,9 +35,14 @@ export default function AuthTerm() {
 
   const { mutate: cookieMutate } = useSetCookie()
 
-  const setUser = useAuthStore((state) => state.setUser)
+  const { agreements, setAgreement } = useTermsStore()
 
-  // 회원가입 API 호출 - 모든 약관에 자동 동의
+  // 필수 약관이 전부 체크되었는지 확인
+  const isAllRequiredChecked = data?.terms
+    ?.filter((term: Term) => term.is_required)
+    .every((term: Term) => agreements[term.id])
+
+  // 회원가입 API 호출
   const handleSubmit = () => {
     const session_id = account?.session_id ?? ''
 
@@ -42,9 +57,8 @@ export default function AuthTerm() {
       { sessionId: session_id, agreements: user_agreements },
       {
         onSuccess: (res) => {
-          setUser(res.user)
           cookieMutate(
-            { req: res.token },
+            { req: { token: res.token, user: res.user } },
             { onSuccess: () => console.log('쿠키 저장 성공') }
           )
           router.push('/idea/input')

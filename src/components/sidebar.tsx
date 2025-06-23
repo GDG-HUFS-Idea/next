@@ -13,13 +13,14 @@ import {
   Box,
   Collapse,
   Tooltip,
+  Link,
 } from '@mui/material'
 import { Settings, LogOut, HelpCircle, History, User } from 'lucide-react'
 // 프로젝트 API 커스텀 훅 사용
 import { useMyProjects } from '@/shared/api/idea/myIdea'
 import { AnalysisResult, ideaStore } from '@/shared/store/ideaStore'
 import { useRouter } from 'next/navigation'
-import { useDeleteCookie } from '@/shared/api/cookie'
+import { useDeleteCookie, useGetCookie } from '@/shared/api/cookie'
 
 const HEADER_HEIGHT = 72 // Header 높이(px) - 실제 헤더 높이에 맞게 조정 필요
 
@@ -41,6 +42,9 @@ const Sidebar = ({
   const setProject = ideaStore((state) => state.setAnalysisResult)
 
   const router = useRouter()
+
+  const { data: cookieData } = useGetCookie()
+  const jwt = cookieData?.jwt
 
   const deleteMutation = useDeleteCookie()
   useEffect(() => {
@@ -119,9 +123,10 @@ const Sidebar = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            paddingTop: 2,
+            paddingTop: 3,
             paddingBottom: 2,
             width: '100%',
+            minHeight: '8%',
           }}
         >
           <User></User>
@@ -141,6 +146,13 @@ const Sidebar = ({
               <Typography variant="subtitle2" color="text.secondary">
                 {user.permissions[0]}
               </Typography>
+              {cookieData ? (
+                ''
+              ) : (
+                <Link href="/login" underline="none">
+                  로그인 하러 가기
+                </Link>
+              )}
             </Box>
           )}
         </Box>
@@ -306,34 +318,37 @@ const Sidebar = ({
             )}
           </Box>
         </Box>
+        {/* 로그아웃 버튼 - 하단에 고정 */}
 
         <Divider sx={{ width: '100%' }} />
-
-        {/* 로그아웃 버튼 - 하단에 고정 */}
-        <Box sx={{ marginTop: 'auto', width: '100%' }}>
-          <ListItem disablePadding>
-            <ListItemButton
-              sx={{ display: 'flex', alignItems: 'center' }}
-              onClick={() => {
-                deleteMutation.mutate()
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 'auto' }}>
-                <Tooltip
-                  title="Logout"
-                  placement="right"
-                  arrow
-                  disableInteractive
-                >
-                  <Box>
-                    <LogOut size={24} />
-                  </Box>
-                </Tooltip>
-              </ListItemIcon>
-              {open && <ListItemText primary="Logout" />}
-            </ListItemButton>
-          </ListItem>
-        </Box>
+        {jwt !== null ? (
+          <Box sx={{ marginTop: 'auto', width: '100%' }}>
+            <ListItem disablePadding>
+              <ListItemButton
+                sx={{ display: 'flex', alignItems: 'center' }}
+                onClick={() => {
+                  deleteMutation.mutate()
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto' }}>
+                  <Tooltip
+                    title="Logout"
+                    placement="right"
+                    arrow
+                    disableInteractive
+                  >
+                    <Box>
+                      <LogOut size={24} />
+                    </Box>
+                  </Tooltip>
+                </ListItemIcon>
+                {open && <ListItemText primary="Logout" />}
+              </ListItemButton>
+            </ListItem>
+          </Box>
+        ) : (
+          <></>
+        )}
       </Drawer>
 
       {/* 메인 컨텐츠 */}

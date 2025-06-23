@@ -1,11 +1,6 @@
 import { create } from 'zustand'
 
 // ✅ 사용자 상태 인터페이스 정의
-interface AuthState {
-  user: { id: number; name: string; permissions: string[] } | null
-  setUser: (user: { id: number; name: string; permissions: string[] }) => void
-  logout: () => void
-}
 
 interface TermAuthState {
   account: {
@@ -21,11 +16,6 @@ interface TermAuthState {
 }
 
 // ✅ Zustand store 생성
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  logout: () => set({ user: null }),
-}))
 
 export const useTermAuthStore = create<TermAuthState>((set) => ({
   account: null,

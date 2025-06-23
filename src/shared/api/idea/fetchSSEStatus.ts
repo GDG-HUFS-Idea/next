@@ -11,8 +11,10 @@ export async function fetchSSEStatus({
   token: string
   onProgress?: (status: AnalysisStatusResponse) => void // ✅ 수정
 }): Promise<AnalysisStatusResponse> {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
-  const url = new URL('/projects/analyses/overview/status', `${apiBaseUrl}`)
+  const url = new URL(
+    '/projects/analyses/overview/status',
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}`
+  )
   url.searchParams.set('task_id', taskId)
 
   const response = await fetch(url.toString(), {
