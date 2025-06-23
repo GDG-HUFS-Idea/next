@@ -32,6 +32,7 @@ export const useSetCookie = () =>
   useMutation({
     mutationFn: async (variables: { req: ReqType }) => {
       const { req } = variables
+
       const response = await fetch('/api/login', {
         method: 'POST',
         headers: {

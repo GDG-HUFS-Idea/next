@@ -24,13 +24,10 @@ coverage
 
 # 💻 운영체제/에디터 관련 파일
 .DS_Store
-<<<<<<< Updated upstream
 .env.local
 .env.development
 .env.test
 .env.production
-=======
->>>>>>> Stashed changes
 .vscode
 .idea
 
@@ -41,8 +38,4 @@ coverage
 # 📷 미디어/임시 파일
 *.swp
 *.swo
-<<<<<<< Updated upstream
 Thumbs.db
-=======
-Thumbs.db
->>>>>>> Stashed changes
