@@ -36,7 +36,6 @@ export async function POST(req: NextRequest) {
       name: 'token',
       value: token,
       httpOnly: true,
-      maxAge: 60 * 60 * 24 * 7,
       path: '/',
       sameSite: 'strict',
     })
@@ -46,7 +45,6 @@ export async function POST(req: NextRequest) {
       name: 'user',
       value: encodeURIComponent(JSON.stringify(user)),
       httpOnly: false,
-      maxAge: 60 * 60 * 24 * 7,
       path: '/',
       sameSite: 'strict',
     })
