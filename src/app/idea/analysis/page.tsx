@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+//import { useEffect } from 'react'
 import { Box } from '@mui/material'
 import AnalysisResults from '@/components/analysis/analysisResults'
 import MarketOverview from '@/components/analysis/marketOverview'
