@@ -29,13 +29,13 @@ export default function MainTarget({ data }: MainTargetProps) {
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h6" fontWeight="bold" fontSize="1.5rem">
           👥 주 타겟층
         </Typography>
       </Box>
 
       {sortedTargets.map((target, index) => (
-        <Box key={index} sx={{ mb: index < sortedTargets.length - 1 ? 5 : 0 }}>
+        <Box key={index} sx={{ mb: index < sortedTargets.length ? 5 : 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 4 }}>
             <Box
               sx={{
@@ -104,7 +104,7 @@ export default function MainTarget({ data }: MainTargetProps) {
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12}>
               <Box sx={{ ml: 4, mb: 2 }}>
                 <Typography
                   variant="subtitle2"
@@ -119,7 +119,7 @@ export default function MainTarget({ data }: MainTargetProps) {
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12}>
               <Box sx={{ ml: 4, mb: 2 }}>
                 <Typography
                   variant="subtitle2"

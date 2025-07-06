@@ -45,7 +45,7 @@ export default function MarketingStrategy({ data }: MarketingStrategyProps) {
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h6" fontWeight="bold" fontSize="1.5rem">
           📣 지원 프로그램
         </Typography>
       </Box>
