@@ -2,15 +2,15 @@ import { useRouter } from 'next/navigation'
 import {
   Container,
   Typography,
-  Card,
-  CardContent,
-  FormControlLabel,
-  Checkbox,
-  Button,
+  // Card,
+  // CardContent,
+  // FormControlLabel,
+  // Checkbox,
+  // Button,
   CircularProgress,
   Box,
 } from '@mui/material'
-import { useTermsStore } from '@/shared/store/useTermsStore'
+//import { useTermsStore } from '@/shared/store/useTermsStore'
 import { useTermAuthStore } from '@/shared/store/authStore'
 import { useTermsQuery, useSignupMutation } from '@/shared/api/getTerms'
 import { styles } from '@/shared/ui/login/authTermStytle'
@@ -35,12 +35,12 @@ export default function AuthTerm() {
 
   const { mutate: cookieMutate } = useSetCookie()
 
-  const { agreements, setAgreement } = useTermsStore()
+  //const { agreements, setAgreement } = useTermsStore()
 
-  // 필수 약관이 전부 체크되었는지 확인
-  const isAllRequiredChecked = data?.terms
-    ?.filter((term: Term) => term.is_required)
-    .every((term: Term) => agreements[term.id])
+  // // 필수 약관이 전부 체크되었는지 확인
+  // const isAllRequiredChecked = data?.terms
+  //   ?.filter((term: Term) => term.is_required)
+  //   .every((term: Term) => agreements[term.id])
 
   // 회원가입 API 호출
   const handleSubmit = () => {
