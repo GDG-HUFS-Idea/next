@@ -1,0 +1,12 @@
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, NotoSans, sans-serif;
+}
+
+@font-face {
+  font-family: 'NotoSans';
+  font-weight: 400;
+  src: url('/font/NotoSansKR-VariableFont_wght.ttf') format('truetype');
+}
