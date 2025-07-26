@@ -154,11 +154,6 @@ const IdeaInput: React.FC = () => {
               >
                 {isPending ? '요청 중...' : '분석 시작'}
               </Button>
-              {typeof jwt !== 'string' && (
-                <Link href="/login" underline="none" sx={{ mt: 2, mr: 1 }}>
-                  <Typography>로그인 하러 가기</Typography>
-                </Link>
-              )}
             </Box>
           </Paper>
 
