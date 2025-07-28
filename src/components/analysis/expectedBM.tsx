@@ -15,28 +15,29 @@ import {
 // API 응답 타입 정의
 type BusinessModel = {
   summary: string
-  value_prop: string
-  revenue: string
-  investments: Array<{
-    order: number
-    section: string
+  value_proposition: {
+    main: string
+    detail: string
+  }
+  revenue_stream: string
+  priorities: Array<{
+    name: string
     description: string
   }>
+  break_even_point: string
 }
 
 type ExpectedBMProps = {
-  data?: BusinessModel
+  businessModel?: BusinessModel
 }
 
-export default function ExpectedBM({ data }: ExpectedBMProps) {
-  if (!data) {
+export default function ExpectedBM(businessModel: ExpectedBMProps) {
+  // 중첩 구조에 맞는 데이터 검증
+  const businessModels = businessModel?.businessModel
+
+  if (!businessModels || !businessModels.value_proposition) {
     return null
   }
-
-  // 투자 우선순위 정렬
-  const sortedInvestments = [...data.investments].sort(
-    (a, b) => a.order - b.order
-  )
 
   return (
     <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
@@ -58,7 +59,7 @@ export default function ExpectedBM({ data }: ExpectedBMProps) {
         }}
       >
         <Typography variant="body1" component="blockquote" fontStyle="italic">
-          {data.summary}
+          {businessModels.summary || '비즈니스 모델 요약 정보가 없습니다.'}
         </Typography>
       </Box>
 
@@ -68,7 +69,14 @@ export default function ExpectedBM({ data }: ExpectedBMProps) {
           제품이 전달하는 가치
         </Typography>
         <Typography variant="body2" paragraph sx={{ ml: 2 }}>
-          {data.value_prop}
+          <strong>
+            {businessModels.value_proposition?.main ||
+              '주요 가치 제안 정보가 없습니다.'}
+          </strong>
+        </Typography>
+        <Typography variant="body2" paragraph sx={{ ml: 2 }}>
+          {businessModels.value_proposition?.detail ||
+            '상세 가치 제안 정보가 없습니다.'}
         </Typography>
 
         <Divider sx={{ my: 2 }} />
@@ -77,7 +85,16 @@ export default function ExpectedBM({ data }: ExpectedBMProps) {
           수익 구조
         </Typography>
         <Typography variant="body2" paragraph sx={{ ml: 2 }}>
-          {data.revenue}
+          {businessModels.revenue_stream || '수익 구조 정보가 없습니다.'}
+        </Typography>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+          손익분기점
+        </Typography>
+        <Typography variant="body2" paragraph sx={{ ml: 2 }}>
+          {businessModels.break_even_point || '손익분기점 정보가 없습니다.'}
         </Typography>
 
         <Divider sx={{ my: 2 }} />
@@ -87,7 +104,7 @@ export default function ExpectedBM({ data }: ExpectedBMProps) {
         </Typography>
 
         <List dense disablePadding>
-          {sortedInvestments.map((item, index) => (
+          {(businessModels.priorities || []).map((item, index) => (
             <ListItem key={index} alignItems="flex-start" sx={{ py: 1 }}>
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <Box
@@ -107,8 +124,8 @@ export default function ExpectedBM({ data }: ExpectedBMProps) {
                 </Box>
               </ListItemIcon>
               <ListItemText
-                primary={item.section}
-                secondary={item.description}
+                primary={item?.name || '이름 없음'}
+                secondary={item?.description || '설명 없음'}
                 primaryTypographyProps={{
                   fontWeight: 'bold',
                   variant: 'body2',
