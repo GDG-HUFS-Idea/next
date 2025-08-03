@@ -245,7 +245,7 @@ const Sidebar = ({
             <Divider sx={{ width: '100%' }} />
 
             {/* Settings */}
-            <ListItem disablePadding>
+            <ListItem disablePadding sx={{ mt: 8 }}>
               <ListItemButton
                 onClick={() => handleMenuClick('settings')}
                 sx={{
@@ -281,7 +281,7 @@ const Sidebar = ({
             <Divider sx={{ width: '100%' }} />
 
             {/* Help */}
-            <ListItem disablePadding>
+            <ListItem disablePadding sx={{ mt: 8 }}>
               <ListItemButton
                 onClick={() => handleMenuClick('help')}
                 sx={{
