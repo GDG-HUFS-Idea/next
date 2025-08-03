@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+
 import {
   Drawer,
   List,
@@ -39,6 +40,7 @@ const Sidebar = ({
   children: React.ReactNode
   user: { user_id: number; name: string; roles: string[] }
   jwt: string
+
 }) => {
   const [open, setOpen] = useState(false)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
@@ -82,6 +84,7 @@ const Sidebar = ({
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingLeft: 2,
+
   }
 
   return (

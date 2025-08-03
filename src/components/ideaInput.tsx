@@ -154,6 +154,7 @@ const IdeaInput: React.FC = () => {
               >
                 {isPending ? '요청 중...' : '분석 시작'}
               </Button>
+
             </Box>
           </Paper>
 

@@ -21,6 +21,7 @@ const ClientSidebar = ({ children }) => {
       {children}
     </Sidebar>
   )
+
 }
 
 export default ClientSidebar
