@@ -5,13 +5,13 @@ import { create } from 'zustand'
 interface TermAuthState {
   account: {
     has_account: boolean
-    session_id: string
-    term_ids: number[]
+    code: string
+    active_term_ids: number[]
   } | null
   setAccount: (account: {
     has_account: boolean
-    session_id: string
-    term_ids: number[]
+    code: string
+    active_term_ids: number[]
   }) => void
 }
 

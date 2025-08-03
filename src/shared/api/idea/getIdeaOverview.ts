@@ -1,116 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useGetCookie } from '../cookie'
-
-// Define the response types based on the API documentation
-export interface MarketTrendItem {
-  year: number
-  volume: number
-  currency: string
-  growth_rate: number
-  source: string
-}
-
-export interface AvgRevenueItem {
-  amount: number
-  currency: string
-  source: string
-}
-
-export interface MarketStats {
-  industry_path: string[]
-  score: number
-  market_trend: {
-    domestic: MarketTrendItem[]
-    global: MarketTrendItem[]
-  }
-  avg_revenue: {
-    domestic: AvgRevenueItem
-    global: AvgRevenueItem
-  }
-}
-
-export interface SimilarServiceItem {
-  description: string
-  logo_url?: string
-  website_url?: string
-  tags: string[]
-  summary: string
-}
-
-export interface SimilarService {
-  score: number
-  items: SimilarServiceItem[]
-}
-
-export interface SupportProgram {
-  name: string
-  organizer: string
-  start_date?: string
-  end_date?: string
-}
-
-export interface TargetMarket {
-  target: string
-  order: number
-  reasons: string
-  appeal: string
-  online_activity: string
-  online_channels: string
-  offline_channels: string
-}
-
-export interface BusinessModelInvestment {
-  order: number
-  section: string
-  description: string
-}
-
-export interface BusinessModel {
-  summary: string
-  value_prop: string
-  revenue: string
-  investments: BusinessModelInvestment[]
-}
-
-export interface Opportunity {
-  score: number
-  items: string[]
-}
-
-export interface LimitationItem {
-  category: string
-  detail: string
-  impact: string
-  solution: string
-}
-
-export interface Limitation {
-  score: number
-  items: LimitationItem[]
-}
-
-export interface TeamRequirement {
-  order: number
-  title: string
-  skill: string
-  responsibility: string
-}
-
-export interface IdeaOverviewResponse {
-  review: string
-  project: {
-    id: number
-    name: string
-  }
-  market_stats: MarketStats
-  similar_service: SimilarService
-  support_programs: SupportProgram[]
-  target_markets: TargetMarket[]
-  business_model: BusinessModel
-  opportunity: Opportunity
-  limitation: Limitation
-  team_requirements: TeamRequirement[]
-}
+import * as ideaType from '@/shared/type/ideaType'
 
 /**
  * Hook to fetch idea overview data by project ID
@@ -118,12 +8,12 @@ export interface IdeaOverviewResponse {
  * @returns Query result with project analysis data
  */
 
-export const useGetIdeaOverview = (projectId: number | undefined) => {
+export const useGetIdeaOverview = (projectId: number) => {
   const { data } = useGetCookie()
   const token = data?.jwt ?? null
-  return useQuery<IdeaOverviewResponse, Error>({
+  return useQuery<ideaType.IdeaOverviewResponse, Error>({
     enabled: !!projectId,
-    queryKey: ['projects', 'analyses', 'overview', projectId, token],
+    queryKey: ['analyses', 'overview', projectId, token],
     queryFn: async () => {
       if (!projectId) {
         throw new Error('Project ID is required')
@@ -135,7 +25,7 @@ export const useGetIdeaOverview = (projectId: number | undefined) => {
 
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/analyses/overview?id=${projectId}`,
+          `/api/analyses/overview?project_id=${projectId}`,
           {
             method: 'GET',
             headers: {

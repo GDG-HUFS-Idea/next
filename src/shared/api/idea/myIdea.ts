@@ -10,18 +10,15 @@ export const useMyProjects = (params = { offset: 0, limit: 10 }) => {
   return useQuery({
     queryKey: ['myProjects', params, token], // 쿼리 키에 params와 baseUrl, token 포함
     queryFn: async () => {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/my`,
-        {
-          params,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      const response = await axios.get(`/api/projects`, {
+        params,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       return response.data
     },
-    enabled: false, // 자동 실행 비활성화 (필요할 때만 refetch 호출)
+    enabled: !!token, // 토큰이 있을 때만 자동 실행
     staleTime: 1000 * 60 * 5, // 5분 캐싱
   })
 }
