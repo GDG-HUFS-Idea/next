@@ -29,9 +29,9 @@ const Sidebar = ({
   children,
 }: {
   user: {
-    id: number
+    user_id: number
     name: string
-    permissions: string[]
+    roles: string[]
   }
   children: React.ReactNode
 }) => {
@@ -56,7 +56,7 @@ const Sidebar = ({
   // useMyProjects hook 사용 - 필수 쿼리 파라미터 offset, limit 설정
   const queryParams = {
     offset: 0,
-    limit: 10,
+    limit: 100,
   }
 
   const { data, refetch, isLoading } = useMyProjects(queryParams)
@@ -144,7 +144,7 @@ const Sidebar = ({
                 {user.name}
               </Typography>
               <Typography variant="subtitle2" color="text.secondary">
-                {user.permissions[0]}
+                {user.roles[0]}
               </Typography>
               {cookieData ? (
                 ''
@@ -257,30 +257,32 @@ const Sidebar = ({
                       <ListItemText primary="로딩 중..." />
                     </ListItemButton>
                   ) : (
-                    data?.projects?.map((project: AnalysisResult) => (
-                      <Tooltip
-                        key={project.id}
-                        title={project.name}
-                        placement="right"
-                        arrow
-                      >
-                        <ListItemButton
-                          sx={{ pl: 2 }}
-                          onClick={() => {
-                            setProject({ id: project.id, name: project.name })
-                            router.push('/idea/analysis')
-                          }}
+                    data?.projects?.map(
+                      (project: { id: number; name: string }) => (
+                        <Tooltip
+                          key={project.id}
+                          title={project.name}
+                          placement="right"
+                          arrow
                         >
-                          <ListItemText
-                            primary={
-                              project.name.length > 8
-                                ? `${project.name.substring(0, 8)}...`
-                                : project.name
-                            }
-                          />
-                        </ListItemButton>
-                      </Tooltip>
-                    ))
+                          <ListItemButton
+                            sx={{ pl: 2 }}
+                            onClick={() => {
+                              setProject({ id: project.id, name: project.name })
+                              router.push('/idea/analysis')
+                            }}
+                          >
+                            <ListItemText
+                              primary={
+                                project.name.length > 8
+                                  ? `${project.name.substring(0, 8)}...`
+                                  : project.name
+                              }
+                            />
+                          </ListItemButton>
+                        </Tooltip>
+                      )
+                    )
                   )}
                   {(!data?.projects || data.projects.length === 0) &&
                     !isLoading && (

@@ -6,7 +6,6 @@ import { processingStyles } from '@/shared/ui/input/processingStyles'
 import { useIdeaStatus } from '@/shared/api/idea/ideaInput'
 import { useRouter } from 'next/navigation'
 import { ideaStore } from '@/shared/store/ideaStore'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 interface IdeaProcessingProps {
   taskId: string
@@ -17,24 +16,41 @@ const IdeaProcessing: React.FC<IdeaProcessingProps> = ({
   taskId,
   username,
 }) => {
-  const [queryClient] = useState(() => new QueryClient())
   const [progress, setProgress] = useState(0)
   const [message, setMessage] = useState('관련 시장 규모를 분석중이에요')
 
   const { mutate, data } = useIdeaStatus(taskId) // 자동 폴링 활성화
   const router = useRouter()
   useEffect(() => {
-    mutate({
-      onProgress: (status) => {
-        if (status.progress !== undefined) {
-          setProgress(Math.round(status.progress * 100))
-        }
-        if (status.message) {
-          setMessage(status.message)
-        }
+    console.log('=== useEffect 실행됨 ===')
+    console.log('taskId in useEffect:', taskId)
+    console.log('mutate in useEffect:', mutate)
+
+    mutate(
+      {
+        onProgress: (status) => {
+          console.log('📈 Progress received:', status)
+          if (status.progress !== undefined) {
+            setProgress(Math.round(status.progress * 100))
+          }
+          if (status.message) {
+            setMessage(status.message)
+          }
+          if (status.status) {
+            console.log(status)
+          }
+        },
       },
-    })
-  }, [mutate])
+      {
+        onError: (error) => {
+          console.error('❌ Mutate error:', error)
+        },
+        onSuccess: (data) => {
+          console.log('✅ Mutate success:', data)
+        },
+      }
+    )
+  }, [taskId, mutate])
   // 상태 조회 쿼리 - remove the type parameter
 
   // Zustand 스토어에서 액션 가져오기
@@ -57,43 +73,41 @@ const IdeaProcessing: React.FC<IdeaProcessingProps> = ({
   ])
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Box sx={processingStyles.container}>
-        <Box sx={processingStyles.progressContainer}>
-          <CircularProgress
-            variant="determinate"
-            value={100}
-            size={400}
-            thickness={4}
-            sx={processingStyles.backgroundProgress}
-          />
-          <CircularProgress
-            variant="determinate"
-            value={progress}
-            size={400}
-            thickness={4}
-            sx={processingStyles.foregroundProgress}
-          />
-          <Box sx={processingStyles.progressTextContainer}>
-            <Typography
-              variant="h3"
-              component="div"
-              sx={processingStyles.progressText}
-            >
-              {`${progress}%`}
-            </Typography>
-          </Box>
+    <Box sx={processingStyles.container}>
+      <Box sx={processingStyles.progressContainer}>
+        <CircularProgress
+          variant="determinate"
+          value={100}
+          size={400}
+          thickness={4}
+          sx={processingStyles.backgroundProgress}
+        />
+        <CircularProgress
+          variant="determinate"
+          value={progress}
+          size={400}
+          thickness={4}
+          sx={processingStyles.foregroundProgress}
+        />
+        <Box sx={processingStyles.progressTextContainer}>
+          <Typography
+            variant="h3"
+            component="div"
+            sx={processingStyles.progressText}
+          >
+            {`${progress}%`}
+          </Typography>
         </Box>
-
-        <Typography variant="h5" sx={processingStyles.titleText}>
-          {username}의 아이디어를 분석중이에요...
-        </Typography>
-
-        <Typography variant="body1" sx={processingStyles.messageText}>
-          {message}
-        </Typography>
       </Box>
-    </QueryClientProvider>
+
+      <Typography variant="h5" sx={processingStyles.titleText}>
+        {username}의 아이디어를 분석중이에요...
+      </Typography>
+
+      <Typography variant="body1" sx={processingStyles.messageText}>
+        {message}
+      </Typography>
+    </Box>
   )
 }
 
