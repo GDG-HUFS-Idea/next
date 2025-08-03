@@ -2,13 +2,16 @@ import { useQuery } from '@tanstack/react-query'
 
 export const useGetAuthCallback = (code: string) => {
   return useQuery({
-    queryKey: ['auth', 'oauth', 'callback', code], // queryKey에 code 포함
+    queryKey: ['auth', 'oauth', 'result', code],
     queryFn: async () => {
-      if (!code) return null // code가 없으면 API 요청 안 함
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/oauth/callback?code=${code}`
-      )
+      const res = await fetch(`/api/auth/oauth/result?code=${code}`) // ✅ 프록시 경로에 맞게 수정
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+
       return res.json()
     },
+    enabled: !!code,
   })
 }

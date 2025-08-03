@@ -3,9 +3,9 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 interface ReqType {
   token: string
   user: {
-    id: number
+    user_id: number
     name: string
-    permissions: string[]
+    roles: string[]
   }
 }
 

@@ -4,13 +4,15 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense, useEffect, useState } from 'react'
 import { useSetCookie } from '@/shared/api/cookie'
 
+interface userType {
+  name: string
+  roles: string[]
+  user_id: number
+}
+
 interface ReqType {
   token: string
-  user: {
-    id: number
-    name: string
-    permissions: string[]
-  }
+  user: userType
 }
 
 // Create a client component that uses useSearchParams
@@ -27,6 +29,7 @@ function AuthCallbackClient() {
 
   useEffect(() => {
     // data가 없으면 early return
+    console.log(data)
     if (!data) return
 
     if (!data.has_account) {
@@ -34,7 +37,8 @@ function AuthCallbackClient() {
       router.push('/terms')
     } else {
       // 쿠키 저장 작업
-      const req: ReqType = { token: data.token, user: data.user }
+      const user = { name: data.name, roles: data.roles, user_id: data.user_id }
+      const req: ReqType = { token: data.token, user }
       cookie.mutate(
         { req },
         {

@@ -4,6 +4,7 @@ import Header from '@/widgets/header/header'
 import Footer from '@/widgets/footer/footer'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import ClientProvider from '@/app/clientProvider'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'SparkLens',
@@ -18,6 +19,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.__ENV = {
+                NEXT_PUBLIC_API_URL: '${process.env.NEXT_PUBLIC_API_URL}',
+                NEXT_PUBLIC_FRONTEND_URL: '${process.env.NEXT_PUBLIC_FRONTEND_URL}'
+              }
+            `,
+          }}
+        />
       </head>
       <body>
         <AppRouterCacheProvider options={{ key: 'css' }}>

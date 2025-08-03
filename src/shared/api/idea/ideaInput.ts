@@ -7,6 +7,7 @@ export interface AnalysisStatusResponse {
   is_complete: boolean
   progress?: number
   message?: string
+  status?: string
   result?: {
     project: {
       id: number
@@ -30,18 +31,15 @@ export const postIdeaInput = async (
   token: string
 ): Promise<TaskResponse> => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/analyses/overview`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      }
-    )
+    const res = await fetch(`/api/analyses/overview`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    })
 
     if (!res.ok) {
       console.log(res)
@@ -49,34 +47,7 @@ export const postIdeaInput = async (
     }
 
     const result = await res.json()
-    return result
-  } catch (error) {
-    throw error
-  }
-}
-
-export const fetchIdeaStatus = async (
-  taskId: string,
-  token: string
-): Promise<AnalysisStatusResponse> => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/projects/analyses/overview/status?task_id=${taskId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-
-    if (!res.ok) {
-      throw new Error(`분석 상태 조회 실패: ${res.status}`)
-    }
-
-    const result: AnalysisStatusResponse = await res.json()
+    console.log(result)
     return result
   } catch (error) {
     throw error

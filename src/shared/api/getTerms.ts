@@ -2,49 +2,59 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 
 // 특정 약관 ID들만 요청하는 GET API
 const fetchTermsByIds = async (ids: number[]) => {
-  if (!ids.length) return { terms: [] } // ID가 없으면 빈 배열 반환
+  if (!ids.length) return { terms: [] }
 
-  const queryString = ids.map((id) => `ids=${id}`).join('&') // URL 파라미터 변환
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/terms?${queryString}`
-  )
+  const queryString = ids.map((id) => `ids=${id}`).join('&')
+  const res = await fetch(`/api/terms?${queryString}`)
 
-  if (!res.ok) throw new Error('이용약관 데이터를 불러올 수 없습니다.')
-  return res.json()
+  console.log('응답 상태:', res.status)
+  console.log('응답 헤더:', res.headers.get('content-type'))
+
+  // 응답을 복제해서 한 번은 텍스트로, 한 번은 JSON으로 읽기
+  const resClone = res.clone()
+  const responseText = await resClone.text()
+  console.log('응답 텍스트:', responseText)
+
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}: ${responseText}`)
+  }
+
+  // 원본 응답으로 JSON 파싱
+  const result = await res.json()
+  console.log('파싱된 데이터:', result)
+  return result
 }
 
 // 회원가입 요청 API
 const postSignup = async ({
-  sessionId,
-  agreements,
+  code,
+  term_agreements,
 }: {
-  sessionId: string
-  agreements: {
+  code: string
+  term_agreements: {
     term_id: number
-    has_agreed: boolean
+    is_agreed: boolean
   }[]
 }) => {
   const data = {
-    session_id: sessionId,
-    user_agreements: agreements,
+    code: code,
+    term_agreements: term_agreements,
   }
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/oauth/signup`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body: JSON.stringify(data),
-    }
-  )
+  console.log(data)
+  const res = await fetch(`/api/auth/oauth/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
 
   if (!res.ok) {
     console.log(res)
     throw new Error('회원가입 요청 실패')
   }
-  return res.json()
+  return await res.json()
 }
 
 // React Query hooks
@@ -59,10 +69,10 @@ export const useTermsQuery = (ids: number[]) => {
 export const useSignupMutation = () => {
   return useMutation({
     mutationFn: (variables: {
-      sessionId: string
-      agreements: {
+      code: string
+      term_agreements: {
         term_id: number
-        has_agreed: boolean
+        is_agreed: boolean
       }[]
     }) => postSignup(variables),
   })

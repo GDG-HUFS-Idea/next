@@ -2,15 +2,15 @@ import { useRouter } from 'next/navigation'
 import {
   Container,
   Typography,
-  Card,
-  CardContent,
-  FormControlLabel,
-  Checkbox,
-  Button,
+  // Card,
+  // CardContent,
+  // FormControlLabel,
+  // Checkbox,
+  // Button,
   CircularProgress,
   Box,
 } from '@mui/material'
-import { useTermsStore } from '@/shared/store/useTermsStore'
+//import { useTermsStore } from '@/shared/store/useTermsStore'
 import { useTermAuthStore } from '@/shared/store/authStore'
 import { useTermsQuery, useSignupMutation } from '@/shared/api/getTerms'
 import { styles } from '@/shared/ui/login/authTermStytle'
@@ -28,33 +28,34 @@ interface Term {
 
 export default function AuthTerm() {
   const account = useTermAuthStore().account
-  const ids = account?.term_ids ?? []
+  const ids = account?.active_term_ids ?? []
   const router = useRouter()
-  const { data, isLoading } = useTermsQuery(ids)
+  const { data, isLoading, isError } = useTermsQuery(ids)
+  console.log(data, isLoading, isError)
   const signupMutation = useSignupMutation()
 
   const { mutate: cookieMutate } = useSetCookie()
 
-  const { agreements, setAgreement } = useTermsStore()
+  //const { agreements, setAgreement } = useTermsStore()
 
   // 필수 약관이 전부 체크되었는지 확인
-  const isAllRequiredChecked = data?.terms
-    ?.filter((term: Term) => term.is_required)
-    .every((term: Term) => agreements[term.id])
+  // const isAllRequiredChecked = data?.terms
+  //   ?.filter((term: Term) => term.is_required)
+  //   .every((term: Term) => agreements[term.id])
 
   // 회원가입 API 호출
   const handleSubmit = () => {
-    const session_id = account?.session_id ?? ''
+    const code = account?.code ?? ''
 
     // 모든 약관에 대해 동의 처리
     const user_agreements =
       data?.terms.map((term: Term) => ({
         term_id: term.id,
-        has_agreed: true, // 모든 약관에 자동으로 동의 설정
+        is_agreed: true, // 모든 약관에 자동으로 동의 설정
       })) || []
 
     signupMutation.mutate(
-      { sessionId: session_id, agreements: user_agreements },
+      { code: code, term_agreements: user_agreements },
       {
         onSuccess: (res) => {
           cookieMutate(
