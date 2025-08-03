@@ -77,81 +77,88 @@ type MarketOverviewProps = {
   ksic_hierarchy?: KsicHierarchy
 }
 
-// Y축 범위와 간격을 계산하는 함수 (수정됨)
+// Y축 범위와 간격을 계산하는 함수
 const calculateYAxisConfig = (data: number[]) => {
-  if (!data || data.length === 0) {
-    // 데이터가 없을 경우 합리적인 기본값 제공
-    return { domain: [0, 10], ticks: [0, 2, 4, 6, 8, 10] }
+  if (data.length === 0) {
+    return { domain: [0, 1], ticks: [0, 0.2, 0.4, 0.6, 0.8, 1] }
   }
 
-  let minValue = Math.min(...data)
-  let maxValue = Math.max(...data)
+  const maxValue = Math.max(...data)
+  const minValue = Math.min(...data)
+  const range = maxValue - minValue || 0.01 // <-- range가 0일 경우 방어
 
-  // 1. 모든 데이터 포인트가 동일한 엣지 케이스 처리
-  if (minValue === maxValue) {
-    const value = minValue
-    if (value === 0) {
-      return { domain: [0, 10], ticks: [0, 2, 4, 6, 8, 10] }
+  const finalMinValue = Math.max(0, minValue - range * 0.1)
+
+  // 🚨 소수점 범위 방어: 너무 작으면 고정
+  if (range < 0.1) {
+    const start = Math.floor(finalMinValue * 100) / 100
+    const end = Math.ceil(maxValue * 100) / 100
+    const ticks: number[] = []
+    for (let i = start; i <= end + 0.001; i += 0.01) {
+      ticks.push(parseFloat(i.toFixed(2)))
     }
-    // 단일 값 주변에 적절한 범위 생성
-    const padding = Math.abs(value) * 0.2 || 1
-    minValue -= padding
-    maxValue += padding
-  }
-
-  // 2. 적절한 간격(interval) 계산
-  const range = maxValue - minValue
-  const targetTickCount = 5 // 약 5개의 틱을 목표로 함
-  // 목표 틱 카운트에 기반한 대략적인 간격
-  const rawInterval = range > 0 ? range / (targetTickCount - 1) : 1
-
-  // 3. 보기 좋은 'nice' 간격 계산 (예: 1, 2, 5, 10, 20, 50, ...)
-  const exponent = Math.floor(Math.log10(rawInterval))
-  const powerOf10 = Math.pow(10, exponent)
-  const magnitude = rawInterval / powerOf10
-
-  let niceInterval
-  if (magnitude < 1.5) {
-    niceInterval = 1 * powerOf10
-  } else if (magnitude < 3) {
-    niceInterval = 2 * powerOf10
-  } else if (magnitude < 7) {
-    niceInterval = 5 * powerOf10
-  } else {
-    niceInterval = 10 * powerOf10
-  }
-
-  // 4. 새로운 도메인(min/max)과 틱 계산
-  // 도메인은 'nice' 간격의 배수에서 시작하고 끝나야 함
-  let domainMin = Math.floor(minValue / niceInterval) * niceInterval
-  const domainMax = Math.ceil(maxValue / niceInterval) * niceInterval
-
-  // 원본 데이터가 모두 0 이상인 경우, Y축이 0 아래로 내려가지 않도록 보정
-  if (Math.min(...data) >= 0) {
-    domainMin = Math.max(0, domainMin)
-  }
-
-  const ticks = []
-  let currentTick = domainMin
-  // 부동 소수점 부정확성 문제를 피하기 위해 toPrecision 사용
-  while (currentTick <= domainMax + niceInterval / 2) {
-    ticks.push(parseFloat(currentTick.toPrecision(12)))
-    currentTick += niceInterval
-  }
-
-  // 최종적으로 틱이 최소 2개는 있도록 보장
-  if (ticks.length < 2) {
-    if (ticks.length === 1) {
-      ticks.push(parseFloat((ticks[0] + niceInterval).toPrecision(12)))
-    } else {
-      // 틱이 아예 없는 경우 (domainMin과 domainMax가 거의 같은 경우)
-      ticks.push(domainMin)
-      ticks.push(domainMax)
+    return {
+      domain: [start, end],
+      ticks,
     }
+  }
+  // let unitSize = 1
+  // Find a suitable unit size (1, 2, 5, 10, 20, 50, 100, ...)
+  const tickSteps = [1, 5, 10] // Common tick steps
+
+  // Determine a base power of 10 for the unit size
+  let powerOfTen = Math.pow(10, Math.floor(Math.log10(range / 5))) // Aim for 5 ticks initially
+
+  let bestUnitSize = 0
+  let minTickCount = Infinity
+
+  for (const step of tickSteps) {
+    const currentUnitSize = step * powerOfTen
+    const currentTickCount =
+      Math.ceil((maxValue - finalMinValue) / currentUnitSize) + 1
+
+    // Ensure at least 2 ticks and not too many (e.g., max 10-15)
+    if (currentTickCount >= 2 && currentTickCount <= 15) {
+      if (currentTickCount < minTickCount) {
+        minTickCount = currentTickCount
+        bestUnitSize = currentUnitSize
+      }
+    }
+  }
+
+  // If no suitable unit size found with current powerOfTen, try next power of ten
+  if (bestUnitSize === 0) {
+    powerOfTen *= 10
+    for (const step of tickSteps) {
+      const currentUnitSize = step * powerOfTen
+      const currentTickCount =
+        Math.ceil((maxValue - finalMinValue) / currentUnitSize) + 1
+      if (currentTickCount >= 2 && currentTickCount <= 15) {
+        if (currentTickCount < minTickCount) {
+          minTickCount = currentTickCount
+          bestUnitSize = currentUnitSize
+        }
+      }
+    }
+  }
+
+  // Fallback if still no good unit size (shouldn't happen often with reasonable data)
+  if (bestUnitSize === 0) {
+    bestUnitSize = Math.ceil(range / 5) // Simple fallback
+    if (bestUnitSize === 0) bestUnitSize = 1 // Avoid zero
+  }
+
+  const maxRounded = Math.ceil(maxValue / bestUnitSize) * bestUnitSize
+  const minRounded =
+    (Math.floor(finalMinValue / bestUnitSize) * bestUnitSize) | 0
+
+  const ticks: number[] = []
+  for (let i: number = minRounded; i <= maxRounded; i += bestUnitSize) {
+    ticks.push(i)
   }
 
   return {
-    domain: [domainMin, domainMax],
+    domain: [minRounded, maxRounded],
     ticks: ticks,
   }
 }
