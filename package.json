@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "predev": "node scripts/generate-env.mjs setup-env --env=dev",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "postbuild": "del public\\__ENV.js",
+    "start": "next start"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -26,6 +27,7 @@
     "react-dom": "^19.0.0",
     "recharts": "^2.15.3",
     "styled-components": "^6.1.15",
+    "yargs": "^18.0.0",
     "zod": "^3.24.1",
     "zustand": "^5.0.4"
   },
