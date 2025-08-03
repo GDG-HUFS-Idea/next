@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+
 import {
   Drawer,
   List,
@@ -14,106 +15,98 @@ import {
   Collapse,
   Tooltip,
   Link,
+  Button,
 } from '@mui/material'
-import { Settings, LogOut, HelpCircle, History, User } from 'lucide-react'
-// 프로젝트 API 커스텀 훅 사용
+import {
+  Settings,
+  LogOut,
+  HelpCircle,
+  History,
+  User,
+  PanelLeft,
+} from 'lucide-react'
 import { useMyProjects } from '@/shared/api/idea/myIdea'
 import { AnalysisResult, ideaStore } from '@/shared/store/ideaStore'
 import { useRouter } from 'next/navigation'
 import { useDeleteCookie, useGetCookie } from '@/shared/api/cookie'
 
-const HEADER_HEIGHT = 72 // Header 높이(px) - 실제 헤더 높이에 맞게 조정 필요
+const HEADER_HEIGHT = 72
 
 const Sidebar = ({
-  user,
   children,
+  user,
+  jwt,
 }: {
-  user: {
-    id: number
-    name: string
-    permissions: string[]
-  }
   children: React.ReactNode
+  user: { user_id: number; name: string; roles: string[] }
+  jwt: string
+
 }) => {
   const [open, setOpen] = useState(false)
   const [selectedMenu, setSelectedMenu] = useState<string | null>(null)
   const [sidebarTop, setSidebarTop] = useState(HEADER_HEIGHT)
 
   const setProject = ideaStore((state) => state.setAnalysisResult)
-
   const router = useRouter()
-
-  const { data: cookieData } = useGetCookie()
-  const jwt = cookieData?.jwt
-
   const deleteMutation = useDeleteCookie()
-  useEffect(() => {
-    if (deleteMutation.isSuccess) {
-      window.location.reload()
-    }
-  }, [deleteMutation.isSuccess])
 
-  // useMyProjects hook 사용 - 필수 쿼리 파라미터 offset, limit 설정
-  const queryParams = {
-    offset: 0,
-    limit: 10,
-  }
-
+  const queryParams = { offset: 0, limit: 100 }
   const { data, refetch, isLoading } = useMyProjects(queryParams)
 
-  // 스크롤 이벤트 핸들러
-  const handleScroll = () => {
-    const position = window.pageYOffset
-
-    if (position < HEADER_HEIGHT) {
-      setSidebarTop(HEADER_HEIGHT - position)
-    } else {
-      setSidebarTop(0)
-    }
-  }
-
-  // 스크롤 이벤트 리스너 등록 및 해제
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
+  const handleScroll = useCallback(() => {
+    const position = typeof window !== 'undefined' ? window.pageYOffset : 0
+    setSidebarTop(position < HEADER_HEIGHT ? HEADER_HEIGHT - position : 0)
   }, [])
 
-  const handleMenuClick = (menu: string) => {
-    setSelectedMenu((prev) => (prev === menu ? null : menu))
-    if (selectedMenu === menu) {
-      setOpen(false) // 메뉴 클릭 시 사이드바 축소
-    } else {
-      setOpen(true) // 메뉴 클릭 시 사이드바 확장
-      if (menu === 'history') {
-        // history 메뉴 클릭 시 프로젝트 목록 가져오기
-        refetch()
-      }
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  useEffect(() => {
+    if (deleteMutation.isSuccess) {
+      router.push('/login')
     }
+  }, [deleteMutation.isSuccess, router])
+
+  const toggleSidebar = () => setOpen((prev) => !prev)
+
+  const handleMenuClick = (menu: string) => {
+    const isSameMenu = selectedMenu === menu
+    setSelectedMenu(isSameMenu ? null : menu)
+    setOpen(!isSameMenu)
+    if (menu === 'history' && !isSameMenu) refetch()
+  }
+
+  const listItemButtonStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingLeft: 2,
+
   }
 
   return (
     <Box sx={{ width: '100%' }}>
-      {/* 사이드바 */}
       <Drawer
         variant="permanent"
         sx={{
-          width: open ? 270 : 60,
+          width: open ? 270 : 56,
           flexShrink: 0,
+          transition: 'width 0.3s ease',
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             position: 'fixed',
-            width: open ? 220 : 60,
+            width: open ? 270 : 56,
             whiteSpace: 'nowrap',
-            transition: 'width 0.3s ease-in-out, top 0.2s ease-out',
-            overflowX: 'hidden',
             display: 'flex',
             flexDirection: 'column',
             borderRight: '1px solid #ddd',
             height: `calc(100% - ${sidebarTop}px)`,
             top: sidebarTop,
+            transition: 'width 0.3s ease',
+            overflow: 'hidden',
           },
         }}
       >
@@ -122,241 +115,242 @@ const Sidebar = ({
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: open ? 'flex-start' : 'center',
+            paddingLeft: open ? 2 : 0,
             paddingTop: 3,
             paddingBottom: 2,
             width: '100%',
             minHeight: '8%',
+            flexDirection: open ? 'row' : 'column',
+            gap: open ? 0 : 1,
           }}
         >
-          <User></User>
-          {open && (
-            <Box sx={{ marginLeft: 2, marginTop: -1 }}>
-              <Typography
-                sx={{
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  maxWidth: 150,
-                  minWidth: 150,
-                }}
-              >
-                {user.name}
-              </Typography>
-              <Typography variant="subtitle2" color="text.secondary">
-                {user.permissions[0]}
-              </Typography>
-              {cookieData ? (
-                ''
-              ) : (
-                <Link href="/login" underline="none">
-                  로그인 하러 가기
-                </Link>
-              )}
-            </Box>
-          )}
-        </Box>
-        <Divider sx={{ width: '100%' }} />
-
-        {/* 메뉴 리스트 - 높이를 90%로 조정 */}
-        <Box
-          sx={{
-            display: 'flex',
-            height: '90%',
-            flexDirection: 'column',
-            overflow: 'auto',
-          }}
-        >
-          <Box sx={{ display: 'flex' }}>
-            <List sx={{ width: '3em', alignItems: 'center' }}>
-              {/* History 버튼 */}
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => handleMenuClick('history')}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: open ? 'flex-start' : 'center',
+              marginLeft: open ? 2 : 0,
+            }}
+          >
+            <User />
+            {open && (
+              <>
+                <Typography
                   sx={{
-                    borderRight:
-                      selectedMenu === 'history' ? '2px solid black' : 'none',
-                    display: 'flex',
-                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: 180,
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 'auto' }}>
-                    <Tooltip
-                      title="History"
-                      placement="right"
-                      arrow
-                      disableInteractive
-                    >
-                      <Box>
-                        <History size={24} />
-                      </Box>
-                    </Tooltip>
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-
-              {/* 설정 버튼 */}
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => handleMenuClick('settings')}
-                  sx={{
-                    borderRight:
-                      selectedMenu === 'settings' ? '2px solid black' : 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 'auto' }}>
-                    <Tooltip
-                      title="Settings"
-                      placement="right"
-                      arrow
-                      disableInteractive
-                    >
-                      <Box>
-                        <Settings size={24} />
-                      </Box>
-                    </Tooltip>
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-
-              {/* 도움말 버튼 */}
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => handleMenuClick('help')}
-                  sx={{
-                    borderRight:
-                      selectedMenu === 'help' ? '2px solid black' : 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 'auto' }}>
-                    <Tooltip
-                      title="Help"
-                      placement="right"
-                      arrow
-                      disableInteractive
-                    >
-                      <Box>
-                        <HelpCircle size={24} />
-                      </Box>
-                    </Tooltip>
-                  </ListItemIcon>
-                </ListItemButton>
-              </ListItem>
-            </List>
-
-            {/* 세부 메뉴 */}
-            {selectedMenu === 'history' && (
-              <Collapse in={selectedMenu === 'history'} timeout="auto">
-                <List component="div" disablePadding>
-                  {isLoading ? (
-                    <ListItemButton sx={{ pl: 2 }}>
-                      <ListItemText primary="로딩 중..." />
-                    </ListItemButton>
+                  {user?.name || '익명 사용자'}
+                </Typography>
+                <Typography variant="subtitle2" color="text.secondary">
+                  {user?.roles?.[0] === '로그인이 필요합니다' ? (
+                    <Link href="/login" sx={{ color: 'black' }}>
+                      로그인
+                    </Link>
                   ) : (
-                    data?.projects?.map((project: AnalysisResult) => (
-                      <Tooltip
-                        key={project.id}
-                        title={project.name}
-                        placement="right"
-                        arrow
-                      >
-                        <ListItemButton
-                          sx={{ pl: 2 }}
-                          onClick={() => {
-                            setProject({ id: project.id, name: project.name })
-                            router.push('/idea/analysis')
-                          }}
-                        >
-                          <ListItemText
-                            primary={
-                              project.name.length > 8
-                                ? `${project.name.substring(0, 8)}...`
-                                : project.name
-                            }
-                          />
-                        </ListItemButton>
-                      </Tooltip>
-                    ))
+                    user?.roles?.[0]
                   )}
-                  {(!data?.projects || data.projects.length === 0) &&
-                    !isLoading && (
-                      <ListItemButton sx={{ pl: 2 }}>
-                        <ListItemText primary="프로젝트가 없습니다" />
-                      </ListItemButton>
-                    )}
-                </List>
-              </Collapse>
-            )}
-            {selectedMenu === 'settings' && (
-              <Collapse in={selectedMenu === 'settings'} timeout="auto">
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 2 }}>
-                    <ListItemText primary="Profile Settings" />
-                  </ListItemButton>
-                  <ListItemButton sx={{ pl: 2 }}>
-                    <ListItemText primary="Privacy & Security" />
-                  </ListItemButton>
-                </List>
-              </Collapse>
-            )}
-
-            {selectedMenu === 'help' && (
-              <Collapse in={selectedMenu === 'help'} timeout="auto">
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 2 }}>
-                    <ListItemText primary="FAQs" />
-                  </ListItemButton>
-                  <ListItemButton sx={{ pl: 2 }}>
-                    <ListItemText primary="Contact Support" />
-                  </ListItemButton>
-                </List>
-              </Collapse>
+                </Typography>
+              </>
             )}
           </Box>
+          <Button
+            onClick={toggleSidebar}
+            sx={{
+              minWidth: open ? 'auto' : '40px',
+              padding: '8px',
+            }}
+          >
+            <PanelLeft color="black" />
+          </Button>
         </Box>
-        {/* 로그아웃 버튼 - 하단에 고정 */}
 
-        <Divider sx={{ width: '100%' }} />
-        {jwt !== null ? (
-          <Box sx={{ marginTop: 'auto', width: '100%' }}>
+        {/* 메뉴 영역 */}
+        <Box sx={{ height: '90%', flexDirection: 'column', overflow: 'auto' }}>
+          <List sx={{ width: '100%' }}>
+            <Divider sx={{ width: '100%' }} />
+
+            {/* History */}
             <ListItem disablePadding>
               <ListItemButton
-                sx={{ display: 'flex', alignItems: 'center' }}
-                onClick={() => {
-                  deleteMutation.mutate()
+                onClick={() => handleMenuClick('history')}
+                sx={{
+                  ...listItemButtonStyle,
+                  borderRight:
+                    selectedMenu === 'history' ? '2px solid black' : 'none',
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 'auto' }}>
-                  <Tooltip
-                    title="Logout"
-                    placement="right"
-                    arrow
-                    disableInteractive
-                  >
-                    <Box>
-                      <LogOut size={24} />
-                    </Box>
-                  </Tooltip>
+                <ListItemIcon sx={{ minWidth: 'auto', marginRight: 2 }}>
+                  <History size={24} />
                 </ListItemIcon>
-                {open && <ListItemText primary="Logout" />}
+                <ListItemText
+                  primary="History"
+                  sx={{ display: open ? 'block' : 'none' }}
+                />
               </ListItemButton>
             </ListItem>
-          </Box>
-        ) : (
-          <></>
+
+            <Collapse
+              in={selectedMenu === 'history' && open}
+              timeout="auto"
+              unmountOnExit
+            >
+              <List component="div" disablePadding>
+                {!jwt ? (
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="로그인이 필요합니다" />
+                  </ListItemButton>
+                ) : isLoading ? (
+                  <ListItemButton sx={{ pl: 2 }}>
+                    <ListItemText primary="로딩 중..." />
+                  </ListItemButton>
+                ) : (
+                  data?.projects?.map((project: AnalysisResult) => {
+                    const shortName =
+                      project.name.length > 8
+                        ? `${project.name.substring(0, 8)}...`
+                        : project.name
+
+                    return (
+                      <ListItemButton
+                        key={project.id}
+                        sx={{ pl: 2 }}
+                        onClick={() => {
+                          setProject({ id: project.id, name: project.name })
+                          router.push('/idea/analysis')
+                        }}
+                      >
+                        {project.name.length > 8 ? (
+                          <Tooltip title={project.name} placement="right" arrow>
+                            <ListItemText primary={shortName} />
+                          </Tooltip>
+                        ) : (
+                          <ListItemText primary={project.name} />
+                        )}
+                      </ListItemButton>
+                    )
+                  })
+                )}
+                {jwt &&
+                  (!data?.projects || data.projects.length === 0) &&
+                  !isLoading && (
+                    <ListItemButton sx={{ pl: 2 }}>
+                      <ListItemText primary="프로젝트가 없습니다" />
+                    </ListItemButton>
+                  )}
+              </List>
+            </Collapse>
+
+            <Divider sx={{ width: '100%' }} />
+
+            {/* Settings */}
+            <ListItem disablePadding sx={{ mt: 8 }}>
+              <ListItemButton
+                onClick={() => handleMenuClick('settings')}
+                sx={{
+                  ...listItemButtonStyle,
+                  borderRight:
+                    selectedMenu === 'settings' ? '2px solid black' : 'none',
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', marginRight: 2 }}>
+                  <Settings size={24} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Settings"
+                  sx={{ display: open ? 'block' : 'none' }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <Collapse
+              in={selectedMenu === 'settings' && open}
+              timeout="auto"
+              unmountOnExit
+            >
+              <List component="div" disablePadding>
+                <ListItemButton sx={{ pl: 2 }}>
+                  <ListItemText primary="Profile Settings" />
+                </ListItemButton>
+                <ListItemButton sx={{ pl: 2 }}>
+                  <ListItemText primary="Privacy & Security" />
+                </ListItemButton>
+              </List>
+            </Collapse>
+
+            <Divider sx={{ width: '100%' }} />
+
+            {/* Help */}
+            <ListItem disablePadding sx={{ mt: 8 }}>
+              <ListItemButton
+                onClick={() => handleMenuClick('help')}
+                sx={{
+                  ...listItemButtonStyle,
+                  borderRight:
+                    selectedMenu === 'help' ? '2px solid black' : 'none',
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', marginRight: 2 }}>
+                  <HelpCircle size={24} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Help"
+                  sx={{ display: open ? 'block' : 'none' }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <Collapse
+              in={selectedMenu === 'help' && open}
+              timeout="auto"
+              unmountOnExit
+            >
+              <List component="div" disablePadding>
+                <ListItemButton sx={{ pl: 2 }}>
+                  <ListItemText primary="FAQs" />
+                </ListItemButton>
+                <ListItemButton sx={{ pl: 2 }}>
+                  <ListItemText primary="Contact Support" />
+                </ListItemButton>
+              </List>
+            </Collapse>
+
+            <Divider sx={{ width: '100%' }} />
+          </List>
+        </Box>
+
+        {/* 로그아웃 */}
+        {jwt && (
+          <>
+            <Divider sx={{ width: '100%' }} />
+            <Box sx={{ marginTop: 'auto', width: '100%' }}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => deleteMutation.mutate()}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
+                  <ListItemIcon sx={{ minWidth: 'auto', marginRight: 2 }}>
+                    <LogOut size={24} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Logout"
+                    sx={{ display: open ? 'block' : 'none' }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Box>
+          </>
         )}
       </Drawer>
 
       {/* 메인 컨텐츠 */}
       <Box
         sx={{
-          flexGrow: 1,
+          marginLeft: open ? '270px' : '56px',
           minHeight: '100vh',
-          overflow: 'auto',
+          transition: 'margin-left 0.3s ease',
         }}
       >
         {children}

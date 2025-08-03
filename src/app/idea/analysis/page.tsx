@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation'
 export default function AnalysisPage() {
   const projectId = ideaStore((state) => state.analysisResult?.id)
   const { data } = useGetIdeaOverview(projectId)
-  
+
   const cookie = useGetCookie()?.data ?? null
   const router = useRouter()
 
