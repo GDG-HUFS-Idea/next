@@ -133,25 +133,25 @@ const Sidebar = ({
             <User />
             {open && (
               <>
-                {user ? (
-                  <>
-                    <Typography
-                      sx={{
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        maxWidth: 180,
-                      }}
-                    >
-                      {user?.name || '익명 사용자'}
-                    </Typography>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {user?.roles?.[0] || ''}
-                    </Typography>
-                  </>
-                ) : (
-                  <Typography>로그인이 필요합니다</Typography>
-                )}
+                <Typography
+                  sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: 180,
+                  }}
+                >
+                  {user?.name || '익명 사용자'}
+                </Typography>
+                <Typography variant="subtitle2" color="text.secondary">
+                  {user?.roles?.[0] === '로그인이 필요합니다' ? (
+                    <Link href="/login" sx={{ color: 'black' }}>
+                      로그인
+                    </Link>
+                  ) : (
+                    user?.roles?.[0]
+                  )}
+                </Typography>
               </>
             )}
           </Box>
